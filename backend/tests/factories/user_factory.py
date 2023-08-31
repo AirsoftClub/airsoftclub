@@ -9,6 +9,7 @@ class UserFactory(factory.Factory):
     class Meta:
         model = User
 
+    id: int
     email = factory.Sequence(lambda n: f"email{n}@test.com")
     name = factory.Faker("first_name")
     lastname = factory.Faker("last_name")

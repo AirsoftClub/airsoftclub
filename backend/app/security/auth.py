@@ -9,7 +9,7 @@ from fastapi.security import OAuth2PasswordBearer
 oauth2_scheme = OAuth2PasswordBearer(tokenUrl="token")
 
 
-def get_current_user(token: Annotated[str, Depends(oauth2_scheme)]):
+def get_current_user(token: Annotated[str, Depends(oauth2_scheme)]) -> UserJWTPayload:
     try:
         user = token_decode(token)
         return user
@@ -22,4 +22,5 @@ def token_encode(payload: UserJWTPayload) -> str:
 
 
 def token_decode(token: str) -> UserJWTPayload:
-    return jwt.decode(token, settings.app_secret, algorithms=["HS256"])
+    payload = jwt.decode(token, settings.app_secret, algorithms=["HS256"])
+    return UserJWTPayload(**payload)

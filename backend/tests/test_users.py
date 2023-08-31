@@ -67,3 +67,13 @@ def test_get_users(client: TestClient, db_authorized_user: User):
     )
     assert response.status_code == 200, response.text
     assert len(response.json()) == 1, response.text
+
+
+@pytest.mark.usefixtures("refresh_database")
+def test_get_user_by_id(client: TestClient, db_authorized_user: User):
+    response = client.get(
+        "/users/me/",
+        headers={"Authorization": f"Bearer {db_authorized_user.token}"},
+    )
+    assert response.status_code == 200, response.text
+    assert response.json()["id"] == db_authorized_user.id, response.text

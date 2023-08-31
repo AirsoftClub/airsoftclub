@@ -62,3 +62,12 @@ def login(
     db.commit()
 
     return db_user
+
+
+@router.get("/me", response_model=UserResponse)
+def me(
+    current_user: UserJWTPayload = Depends(get_current_user),
+    db: Session = Depends(get_db),
+    user_repository: UserRepository = Depends(UserRepository),
+):
+    return user_repository.get_by_id(db, current_user.id)

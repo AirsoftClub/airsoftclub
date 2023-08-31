@@ -7,6 +7,9 @@ class UserRepository:
     def get_all(self, db: Session) -> list[User]:
         return db.query(User).all()
 
+    def get_by_id(self, db: Session, id: int) -> User | None:
+        return db.query(User).filter(User.id == id).first()
+
     def get_by_email(self, db: Session, email: str) -> User | None:
         return db.query(User).filter(User.email == email).first()
 

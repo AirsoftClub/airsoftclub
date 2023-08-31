@@ -75,6 +75,9 @@ def db_authorized_user(db: Session, **kwargs: Unpack[UserFactory]):
     user = UserFactory(**kwargs)
     db.add(user)
     db.commit()
+
+    db.refresh(user)
+
     user.token = token_encode(
         UserJWTPayload(
             id=user.id,
