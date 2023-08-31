@@ -111,3 +111,22 @@ def test_avatar_invalid_mime_type(client: TestClient, db_authorized_user: User):
         files={"avatar": ("test.txt", open("tests/test.txt", "rb"), "text/plain")},
     )
     assert response.status_code == 400, response.text
+
+
+@pytest.mark.usefixtures("refresh_database")
+def test_user_can_update_name_and_lastname(
+    client: TestClient, db_authorized_user: User
+):
+    response = client.post(
+        "/users/me/",
+        headers={"Authorization": f"Bearer {db_authorized_user.token}"},
+        json={"name": "John", "lastname": "Doe"},
+    )
+    assert response.status_code == 200, response.text
+    assert response.json()["name"] == "John", response.text
+    assert response.json()["lastname"] == "Doe", response.text
+
+
+def test_user_update_requires_authorization(client: TestClient):
+    response = client.post("/users/me/")
+    assert response.status_code == 401, response.text

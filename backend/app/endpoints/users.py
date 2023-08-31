@@ -9,6 +9,7 @@ from app.schemas.users import (
     UserLoginRequest,
     UserRegisterRequest,
     UserResponse,
+    UserUpdateRequest,
 )
 from app.security.auth import get_current_user, token_encode
 from app.security.password import Hash
@@ -74,6 +75,28 @@ def me(
     user_repository: UserRepository = Depends(UserRepository),
 ):
     return user_repository.get_by_id(db, current_user.id)
+
+
+@router.post("/me", response_model=UserResponse)
+def update_me(
+    user: UserUpdateRequest,
+    current_user: UserJWTPayload = Depends(get_current_user),
+    db: Session = Depends(get_db),
+    user_repository: UserRepository = Depends(UserRepository),
+):
+    db_user = user_repository.get_by_id(db, current_user.id)
+
+    if db_user is None:
+        raise HTTPException(status_code=404, detail="User not found")
+
+    db_user.name = user.name
+    db_user.lastname = user.lastname
+
+    db.add(db_user)
+    db.commit()
+    db.refresh(db_user)
+
+    return db_user
 
 
 @router.post("/me/avatar", response_model=UserResponse)

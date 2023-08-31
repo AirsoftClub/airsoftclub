@@ -33,6 +33,13 @@ class UserRegisterRequest(BaseModel):
     password: str
 
 
+class UserUpdateRequest(BaseModel):
+    model_config = ConfigDict(from_attributes=True)
+
+    name: str
+    lastname: str
+
+
 class UserLoginRequest(BaseModel):
     model_config = ConfigDict(from_attributes=True)
 
