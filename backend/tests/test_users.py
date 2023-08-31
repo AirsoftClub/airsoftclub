@@ -2,6 +2,8 @@ import pytest
 from app.models.user import User
 from app.security.password import Hash
 from fastapi.testclient import TestClient
+from mock import mock_open, patch
+from sqlalchemy.orm import Session
 
 
 @pytest.mark.usefixtures("refresh_database")
@@ -77,3 +79,35 @@ def test_get_user_by_id(client: TestClient, db_authorized_user: User):
     )
     assert response.status_code == 200, response.text
     assert response.json()["id"] == db_authorized_user.id, response.text
+
+
+@pytest.mark.usefixtures("refresh_database")
+@patch("builtins.open", mock_open(read_data="data"))
+@patch("os.makedirs", lambda *args, **kwargs: None)
+def test_user_can_upload_avatar(
+    client: TestClient, db_authorized_user: User, db: Session
+):
+    response = client.post(
+        "/users/me/avatar/",
+        headers={"Authorization": f"Bearer {db_authorized_user.token}"},
+        files={"avatar": ("test.png", open("tests/test.png", "rb"), "image/png")},
+    )
+    assert response.status_code == 200, response.text
+    db.refresh(db_authorized_user)
+    assert db_authorized_user.avatar.url is not None, response.text
+
+
+def test_avatar_upload_requires_authorization(client: TestClient):
+    response = client.post("/users/me/avatar/")
+    assert response.status_code == 401, response.text
+
+
+@pytest.mark.usefixtures("refresh_database")
+@patch("builtins.open", mock_open(read_data="data"))
+def test_avatar_invalid_mime_type(client: TestClient, db_authorized_user: User):
+    response = client.post(
+        "/users/me/avatar/",
+        headers={"Authorization": f"Bearer {db_authorized_user.token}"},
+        files={"avatar": ("test.txt", open("tests/test.txt", "rb"), "text/plain")},
+    )
+    assert response.status_code == 400, response.text

@@ -1,7 +1,9 @@
 from datetime import datetime
 
 from app.models.base import Base
-from sqlalchemy import Column, DateTime, Integer, String
+from app.models.file import File
+from sqlalchemy import Column, DateTime, ForeignKey, Integer, String
+from sqlalchemy.orm import Mapped, relationship
 
 
 class User(Base):
@@ -15,3 +17,13 @@ class User(Base):
     token = Column(String)
     created_at = Column(DateTime, default=datetime.utcnow)
     updated_at = Column(DateTime, default=datetime.utcnow, onupdate=datetime.utcnow)
+
+    avatar_id = Column(
+        Integer,
+        ForeignKey("files.id"),
+        nullable=True,
+    )
+    avatar: Mapped["File"] = relationship("File", uselist=False)
+
+    def __repr__(self):
+        return f"<User {self.id}>"

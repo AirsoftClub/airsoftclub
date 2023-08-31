@@ -1,3 +1,6 @@
+from typing import Optional
+
+from app.schemas.file import AvatarResponse
 from pydantic import BaseModel, ConfigDict
 
 
@@ -8,6 +11,7 @@ class UserResponse(BaseModel):
     name: str
     lastname: str
     email: str
+    avatar: Optional[AvatarResponse] = None
 
 
 class UserAuthenticatedResponse(BaseModel):

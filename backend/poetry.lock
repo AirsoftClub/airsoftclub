@@ -584,6 +584,22 @@ files = [
 ]
 
 [[package]]
+name = "mock"
+version = "5.1.0"
+description = "Rolling backport of unittest.mock for all Pythons"
+optional = false
+python-versions = ">=3.6"
+files = [
+    {file = "mock-5.1.0-py3-none-any.whl", hash = "sha256:18c694e5ae8a208cdb3d2c20a993ca1a7b0efa258c247a1e565150f477f83744"},
+    {file = "mock-5.1.0.tar.gz", hash = "sha256:5e96aad5ccda4718e0a229ed94b2024df75cc2d55575ba5762d31f5767b8767d"},
+]
+
+[package.extras]
+build = ["blurb", "twine", "wheel"]
+docs = ["sphinx"]
+test = ["pytest", "pytest-cov"]
+
+[[package]]
 name = "orjson"
 version = "3.9.5"
 description = "Fast, correct Python JSON library supporting dataclasses, datetimes, and numpy"
@@ -1457,4 +1473,4 @@ files = [
 [metadata]
 lock-version = "2.0"
 python-versions = "^3.11"
-content-hash = "31645f626939d89e31b1ea1d5f4af32d2d24a83ddf84feb778932ce71504dd1b"
+content-hash = "f338b6eaabb835815ef23734e948476974824c7344df81eac0596dc143abc1fb"

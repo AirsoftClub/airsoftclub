@@ -15,5 +15,7 @@ class UserFactory(factory.Factory):
     lastname = factory.Faker("last_name")
     password = Hash.bcrypt("password")
     token = None
+    avatar_id = None
+    avatar = None
     created_at = factory.LazyFunction(datetime.now)
     updated_at = factory.LazyFunction(datetime.now)
