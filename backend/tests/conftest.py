@@ -3,15 +3,16 @@ from typing import Unpack
 import pytest
 from app.core.database import get_db
 from app.models.base import Base
+from app.models.user import User
+from app.schemas.users import UserJWTPayload
+from app.security.auth import token_encode
 from fastapi.testclient import TestClient
 from main import create_app
 from sqlalchemy import create_engine
 from sqlalchemy.orm import Session, sessionmaker
 from sqlalchemy.pool import StaticPool
+from tests.factories.field_factory import FieldFactory
 from tests.factories.user_factory import UserFactory
-
-from backend.app.schemas.users import UserJWTPayload
-from backend.app.security.auth import token_encode
 
 SQLALCHEMY_DATABASE_URL = "sqlite://"
 
@@ -90,3 +91,12 @@ def db_authorized_user(db: Session, **kwargs: Unpack[UserFactory]):
     db.commit()
     db.refresh(user)
     return user
+
+
+@pytest.fixture
+def fields(db: Session, db_authorized_user: User, count: int = 1):
+    fields = FieldFactory.create_batch(count, owner=db_authorized_user)
+    db.add_all(fields)
+    db.commit()
+    [db.refresh(field) for field in fields]
+    return fields

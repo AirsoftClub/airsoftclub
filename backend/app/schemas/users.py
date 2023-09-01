@@ -1,6 +1,6 @@
 from typing import Optional
 
-from app.schemas.file import AvatarResponse
+from app.schemas.files import AvatarResponse
 from pydantic import BaseModel, ConfigDict
 
 

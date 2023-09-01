@@ -1,9 +1,13 @@
 from datetime import datetime
+from typing import TYPE_CHECKING
 
 from app.models.base import Base
-from app.models.file import File
 from sqlalchemy import Column, DateTime, ForeignKey, Integer, String
 from sqlalchemy.orm import Mapped, relationship
+
+if TYPE_CHECKING:
+    from app.models.field import Field
+    from app.models.file import File
 
 
 class User(Base):
@@ -24,6 +28,8 @@ class User(Base):
         nullable=True,
     )
     avatar: Mapped["File"] = relationship("File", uselist=False)
+
+    fields: Mapped["Field"] = relationship("Field", back_populates="owner")
 
     def __repr__(self):
         return f"<User {self.id}>"
