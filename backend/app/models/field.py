@@ -7,8 +7,8 @@ from sqlalchemy.orm import Mapped, relationship
 
 if TYPE_CHECKING:
     from app.models.file import File
+    from app.models.game import Game
     from app.models.user import User
-
 
 fields_photos = Table(
     "fields_photos",
@@ -32,12 +32,16 @@ class Field(Base):
     )
 
     owner_id = Column(Integer, ForeignKey("users.id"))
-    owner: Mapped["User"] = relationship("User", back_populates="fields")
+    owner: Mapped["User"] = relationship(back_populates="fields")
 
     avatar_id = Column(Integer, ForeignKey("files.id"))
-    avatar: Mapped["File"] = relationship("File", uselist=False)
+    avatar: Mapped["File"] = relationship()
 
-    photos: Mapped[list["File"]] = relationship("File", secondary=fields_photos)
+    photos: Mapped[list["File"]] = relationship(secondary=fields_photos)
+
+    games: Mapped[list["Game"]] = relationship(
+        back_populates="field",
+    )
 
     def __repr__(self):
         return f"<Field {self.name}>"

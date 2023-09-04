@@ -3,11 +3,14 @@ from typing import TYPE_CHECKING
 
 from app.models.base import Base
 from sqlalchemy import Column, DateTime, ForeignKey, Integer, String
+from sqlalchemy.ext.associationproxy import AssociationProxy, association_proxy
 from sqlalchemy.orm import Mapped, relationship
 
 if TYPE_CHECKING:
+    from app.models.booking import Booking
     from app.models.field import Field
     from app.models.file import File
+    from app.models.game import Game
 
 
 class User(Base):
@@ -27,9 +30,13 @@ class User(Base):
         ForeignKey("files.id"),
         nullable=True,
     )
-    avatar: Mapped["File"] = relationship("File", uselist=False)
+    avatar: Mapped["File"] = relationship()
 
     fields: Mapped["Field"] = relationship("Field", back_populates="owner")
+
+    bookings: Mapped[list["Booking"]] = relationship(back_populates="player")
+
+    games: AssociationProxy[list["Game"]] = association_proxy("bookings", "game")
 
     def __repr__(self):
         return f"<User {self.id}>"
