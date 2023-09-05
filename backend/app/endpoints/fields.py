@@ -1,6 +1,5 @@
 import os
 
-from app.core.database import get_db
 from app.models.file import File
 from app.repositories.fields import FieldRepository
 from app.schemas.fields import FieldResponse
@@ -8,7 +7,6 @@ from app.schemas.files import FieldPhotoResponse
 from app.schemas.users import UserJWTPayload
 from app.security.auth import get_current_user
 from fastapi import APIRouter, Depends, HTTPException, UploadFile
-from sqlalchemy.orm import Session
 
 router = APIRouter()
 
@@ -16,20 +14,18 @@ router = APIRouter()
 @router.get("/", response_model=list[FieldResponse])
 def get_fields(
     current_user: UserJWTPayload = Depends(get_current_user),
-    db: Session = Depends(get_db),
-    field_repository: FieldRepository = Depends(FieldRepository),
+    field_repository: FieldRepository = Depends(),
 ):
-    return field_repository.get_all(db)
+    return field_repository.get_all()
 
 
 @router.get("/{id}", response_model=FieldResponse)
 def get_field(
     id: int,
     current_user: UserJWTPayload = Depends(get_current_user),
-    db: Session = Depends(get_db),
-    field_repository: FieldRepository = Depends(FieldRepository),
+    field_repository: FieldRepository = Depends(),
 ):
-    return field_repository.get_by_id(db, id)
+    return field_repository.get_by_id(id)
 
 
 @router.post("/{id}/avatar", response_model=FieldResponse)
@@ -37,10 +33,9 @@ def upload_avatar(
     id: int,
     avatar: UploadFile,
     current_user: UserJWTPayload = Depends(get_current_user),
-    db: Session = Depends(get_db),
-    field_repository: FieldRepository = Depends(FieldRepository),
+    field_repository: FieldRepository = Depends(),
 ):
-    field = field_repository.get_by_id(db, id)
+    field = field_repository.get_by_id(id)
 
     if field.owner_id != current_user.id:
         raise HTTPException(
@@ -62,11 +57,7 @@ def upload_avatar(
 
     field.avatar = File(path=path)
 
-    db.add(field)
-    db.commit()
-    db.refresh(field)
-
-    return field
+    return field_repository.update(field)
 
 
 @router.post("/{id}/photos", response_model=list[FieldPhotoResponse])
@@ -74,10 +65,9 @@ def upload_photos(
     photos: list[UploadFile],
     id: int,
     current_user: UserJWTPayload = Depends(get_current_user),
-    db: Session = Depends(get_db),
-    field_repository: FieldRepository = Depends(FieldRepository),
+    field_repository: FieldRepository = Depends(),
 ):
-    field = field_repository.get_by_id(db, id)
+    field = field_repository.get_by_id(id)
 
     if not field:
         raise HTTPException(status_code=404, detail="Field not found")
@@ -103,7 +93,6 @@ def upload_photos(
 
         field.photos.append(File(path=path))
 
-    db.add(field)
-    db.commit()
+    field_repository.update(field)
 
     return field.photos

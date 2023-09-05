@@ -1,31 +1,42 @@
+from app.core.database import get_db
 from app.models.user import User
 from app.schemas.users import UserRegisterRequest
+from fastapi import Depends
 from sqlalchemy.orm import Session, joinedload
 
 
 class UserRepository:
-    def get_all(self, db: Session) -> list[User]:
-        return db.query(User).options(joinedload(User.avatar)).all()
+    def __init__(self, db: Session = Depends(get_db)):
+        self.db = db
 
-    def get_by_id(self, db: Session, id: int) -> User | None:
+    def get_all(self) -> list[User]:
+        return self.db.query(User).options(joinedload(User.avatar)).all()
+
+    def get_by_id(self, id: int) -> User | None:
         return (
-            db.query(User)
+            self.db.query(User)
             .filter(User.id == id)
             .options(joinedload(User.avatar))
             .first()
         )
 
-    def get_by_email(self, db: Session, email: str) -> User | None:
+    def get_by_email(self, email: str) -> User | None:
         return (
-            db.query(User)
+            self.db.query(User)
             .filter(User.email == email)
             .options(joinedload(User.avatar))
             .first()
         )
 
-    def create(self, db: Session, user: UserRegisterRequest) -> User:
+    def create(self, user: UserRegisterRequest) -> User:
         db_user = User(**user.model_dump())
-        db.add(db_user)
-        db.commit()
-        db.refresh(db_user)
+        self.db.add(db_user)
+        self.db.commit()
+        self.db.refresh(db_user)
         return db_user
+
+    def update(self, user: User) -> User:
+        self.db.add(user)
+        self.db.commit()
+        self.db.refresh(user)
+        return user

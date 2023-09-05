@@ -1,6 +1,5 @@
 import os
 
-from app.core.database import get_db
 from app.models.file import File
 from app.repositories.users import UserRepository
 from app.schemas.users import (
@@ -14,7 +13,6 @@ from app.schemas.users import (
 from app.security.auth import get_current_user, token_encode
 from app.security.password import Hash
 from fastapi import APIRouter, Depends, HTTPException, UploadFile
-from sqlalchemy.orm import Session
 
 router = APIRouter()
 
@@ -22,30 +20,27 @@ router = APIRouter()
 @router.get("/", response_model=list[UserResponse])
 def get_users(
     current_user: UserJWTPayload = Depends(get_current_user),
-    db: Session = Depends(get_db),
-    user_repository: UserRepository = Depends(UserRepository),
+    user_repository: UserRepository = Depends(),
 ):
-    return user_repository.get_all(db)
+    return user_repository.get_all()
 
 
 @router.post("/register", response_model=UserResponse)
 def register(
     user: UserRegisterRequest,
-    db: Session = Depends(get_db),
-    user_repository: UserRepository = Depends(UserRepository),
+    user_repository: UserRepository = Depends(),
 ):
     user.password = Hash.bcrypt(user.password)
-    user = user_repository.create(db, user)
-    return user
+
+    return user_repository.create(user)
 
 
 @router.post("/login", response_model=UserAuthenticatedResponse)
 def login(
     user: UserLoginRequest,
-    db: Session = Depends(get_db),
-    user_repository: UserRepository = Depends(UserRepository),
+    user_repository: UserRepository = Depends(),
 ):
-    db_user = user_repository.get_by_email(db, user.email)
+    db_user = user_repository.get_by_email(user.email)
 
     if db_user is None:
         raise HTTPException(status_code=404, detail="User not found")
@@ -62,29 +57,24 @@ def login(
         )
     )
 
-    db.add(db_user)
-    db.commit()
-
-    return db_user
+    return user_repository.update(db_user)
 
 
 @router.get("/me", response_model=UserResponse)
 def me(
     current_user: UserJWTPayload = Depends(get_current_user),
-    db: Session = Depends(get_db),
-    user_repository: UserRepository = Depends(UserRepository),
+    user_repository: UserRepository = Depends(),
 ):
-    return user_repository.get_by_id(db, current_user.id)
+    return user_repository.get_by_id(current_user.id)
 
 
 @router.post("/me", response_model=UserResponse)
 def update_me(
     user: UserUpdateRequest,
     current_user: UserJWTPayload = Depends(get_current_user),
-    db: Session = Depends(get_db),
-    user_repository: UserRepository = Depends(UserRepository),
+    user_repository: UserRepository = Depends(),
 ):
-    db_user = user_repository.get_by_id(db, current_user.id)
+    db_user = user_repository.get_by_id(current_user.id)
 
     if db_user is None:
         raise HTTPException(status_code=404, detail="User not found")
@@ -92,19 +82,14 @@ def update_me(
     db_user.name = user.name
     db_user.lastname = user.lastname
 
-    db.add(db_user)
-    db.commit()
-    db.refresh(db_user)
-
-    return db_user
+    return user_repository.update(db_user)
 
 
 @router.post("/me/avatar", response_model=UserResponse)
 def me_avatar(
     avatar: UploadFile,
     current_user: UserJWTPayload = Depends(get_current_user),
-    db: Session = Depends(get_db),
-    user_repository: UserRepository = Depends(UserRepository),
+    user_repository: UserRepository = Depends(),
 ):
     if avatar.content_type not in ["image/jpeg", "image/png"]:
         raise HTTPException(status_code=400, detail="Invalid file type")
@@ -119,9 +104,7 @@ def me_avatar(
     with open(file_path, "wb") as buffer:
         buffer.write(avatar.file.read())
 
-    user = user_repository.get_by_id(db, current_user.id)
+    user = user_repository.get_by_id(current_user.id)
     user.avatar = File(path=file_path)
-    db.commit()
-    db.refresh(user)
 
-    return user
+    return user_repository.update(user)
