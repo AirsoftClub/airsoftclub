@@ -12,13 +12,15 @@ alembic = "^1.11.3"
 psycopg2-binary = "^2.9.7"
 pyjwt = "^2.8.0"
 passlib = {extras = ["bcrypt"], version = "^1.7.4"}
-factory-boy = "^3.3.0"
+
 
 
 [tool.poetry.group.dev.dependencies]
 pytest = "^7.4.0"
 coverage = "^7.3.0"
 mock = "^5.1.0"
+pytest-pretty = "^1.2.0"
+factory-boy = "^3.3.0"
 
 [build-system]
 requires = ["poetry-core"]

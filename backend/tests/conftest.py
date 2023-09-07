@@ -1,102 +1,55 @@
-from typing import Unpack
-
 import pytest
 from app.core.database import get_db
 from app.models.base import Base
-from app.models.user import User
-from app.schemas.users import UserJWTPayload
-from app.security.auth import token_encode
+from app.security.auth import get_current_user
+from fastapi import FastAPI
 from fastapi.testclient import TestClient
 from main import create_app
-from sqlalchemy import create_engine
-from sqlalchemy.orm import Session, sessionmaker
-from sqlalchemy.pool import StaticPool
-from tests.factories.field_factory import FieldFactory
-from tests.factories.user_factory import UserFactory
-
-SQLALCHEMY_DATABASE_URL = "sqlite://"
-
-engine = create_engine(
-    SQLALCHEMY_DATABASE_URL,
-    connect_args={"check_same_thread": False},
-    poolclass=StaticPool,
-)
-TestingSessionLocal = sessionmaker(autocommit=False, autoflush=False, bind=engine)
+from sqlalchemy import StaticPool, create_engine
+from sqlalchemy.orm import sessionmaker
+from sqlalchemy.orm.session import Session
+from tests.factories import sqlalchemy_factories
+from tests.factories.user import UserFactory
 
 
-Base.metadata.create_all(bind=engine)
+@pytest.fixture(autouse=True)
+def db_session():
+    SQLALCHEMY_DATABASE_URL = "sqlite:///:memory:"
 
+    engine = create_engine(
+        SQLALCHEMY_DATABASE_URL,
+        connect_args={"check_same_thread": False},
+        poolclass=StaticPool,
+    )
 
-def override_get_db():
-    try:
-        db = TestingSessionLocal()
-        yield db
-    finally:
-        db.close()
-
-
-app = create_app()
-app.dependency_overrides[get_db] = override_get_db
-
-test_client = TestClient(app)
-
-
-@pytest.fixture
-def db():
-    try:
-        db = TestingSessionLocal()
-        yield db
-    finally:
-        db.close()
-
-
-@pytest.fixture
-def refresh_database():
-    yield
     Base.metadata.drop_all(bind=engine)
     Base.metadata.create_all(bind=engine)
 
+    SessionLocal = sessionmaker(autocommit=False, autoflush=False, bind=engine)
+
+    return SessionLocal()
+
+
+@pytest.fixture(autouse=True)
+def set_session_in_factories(db_session: Session):
+    for factory in sqlalchemy_factories:
+        factory._meta.sqlalchemy_session_factory = lambda: db_session
+
+
+@pytest.fixture()
+def app(db_session: Session):
+    app = create_app()
+    app.dependency_overrides[get_db] = lambda: db_session
+    return app
+
+
+@pytest.fixture()
+def client(app: FastAPI):
+    return TestClient(app)
+
 
 @pytest.fixture
-def client():
-    yield test_client
-
-
-@pytest.fixture
-def db_user(db: Session, **kwargs: Unpack[UserFactory]):
-    user = UserFactory(**kwargs)
-    db.add(user)
-    db.commit()
-    db.refresh(user)
+def authenticate_user(app: FastAPI):
+    user = UserFactory()
+    app.dependency_overrides[get_current_user] = lambda: user
     return user
-
-
-@pytest.fixture
-def db_authorized_user(db: Session, **kwargs: Unpack[UserFactory]):
-    user = UserFactory(**kwargs)
-    db.add(user)
-    db.commit()
-
-    db.refresh(user)
-
-    user.token = token_encode(
-        UserJWTPayload(
-            id=user.id,
-            name=user.name,
-            lastname=user.lastname,
-            email=user.email,
-        )
-    )
-    db.add(user)
-    db.commit()
-    db.refresh(user)
-    return user
-
-
-@pytest.fixture
-def fields(db: Session, db_authorized_user: User, count: int = 1):
-    fields = FieldFactory.create_batch(count, owner=db_authorized_user)
-    db.add_all(fields)
-    db.commit()
-    [db.refresh(field) for field in fields]
-    return fields

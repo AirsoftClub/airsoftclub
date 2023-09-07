@@ -1,10 +1,10 @@
-import os
+from pathlib import Path
 
 from app.models.file import File
+from app.models.user import User
 from app.repositories.fields import FieldRepository
 from app.schemas.fields import FieldResponse
 from app.schemas.files import FieldPhotoResponse
-from app.schemas.users import UserJWTPayload
 from app.security.auth import get_current_user
 from fastapi import APIRouter, Depends, HTTPException, UploadFile
 
@@ -13,7 +13,7 @@ router = APIRouter()
 
 @router.get("/", response_model=list[FieldResponse])
 def get_fields(
-    current_user: UserJWTPayload = Depends(get_current_user),
+    current_user: User = Depends(get_current_user),
     field_repository: FieldRepository = Depends(),
 ):
     return field_repository.get_all()
@@ -22,20 +22,28 @@ def get_fields(
 @router.get("/{id}", response_model=FieldResponse)
 def get_field(
     id: int,
-    current_user: UserJWTPayload = Depends(get_current_user),
+    current_user: User = Depends(get_current_user),
     field_repository: FieldRepository = Depends(),
 ):
-    return field_repository.get_by_id(id)
+    field = field_repository.get_by_id(id)
+
+    if not field:
+        raise HTTPException(status_code=404, detail="Field not found")
+
+    return field
 
 
 @router.post("/{id}/avatar", response_model=FieldResponse)
 def upload_avatar(
     id: int,
     avatar: UploadFile,
-    current_user: UserJWTPayload = Depends(get_current_user),
+    current_user: User = Depends(get_current_user),
     field_repository: FieldRepository = Depends(),
 ):
     field = field_repository.get_by_id(id)
+
+    if not field:
+        raise HTTPException(status_code=404, detail="Field not found")
 
     if field.owner_id != current_user.id:
         raise HTTPException(
@@ -45,17 +53,17 @@ def upload_avatar(
     if avatar.content_type not in ["image/jpeg", "image/png"]:
         raise HTTPException(status_code=400, detail="Invalid file type")
 
-    directory = os.path.join("static", "fields", "avatar", str(field.id))
+    directory = Path(f"static/fields/{field.id}/avatar")
 
-    if not os.path.exists(directory):
-        os.makedirs(directory)
+    if not directory.exists():
+        directory.mkdir(parents=True)
 
-    path = os.path.join(directory, avatar.filename)
+    path = directory / str(avatar.filename)
 
     with open(path, "wb") as buffer:
         buffer.write(avatar.file.read())
 
-    field.avatar = File(path=path)
+    field.avatar = File(path=path.as_posix())
 
     return field_repository.update(field)
 
@@ -64,7 +72,7 @@ def upload_avatar(
 def upload_photos(
     photos: list[UploadFile],
     id: int,
-    current_user: UserJWTPayload = Depends(get_current_user),
+    current_user: User = Depends(get_current_user),
     field_repository: FieldRepository = Depends(),
 ):
     field = field_repository.get_by_id(id)
@@ -81,17 +89,17 @@ def upload_photos(
         if photo.content_type not in ["image/jpeg", "image/png"]:
             raise HTTPException(status_code=400, detail="Invalid file type")
 
-    directory = os.path.join("static", "fields", "photos", str(field.id))
+    directory = Path(f"static/fields/{field.id}/photos")
 
-    if not os.path.exists(directory):
-        os.makedirs(directory)
+    if not directory.exists():
+        directory.mkdir(parents=True)
 
     for photo in photos:
-        path = os.path.join(directory, photo.filename)
+        path = directory / str(photo.filename)
         with open(path, "wb") as buffer:
             buffer.write(photo.file.read())
 
-        field.photos.append(File(path=path))
+        field.photos.append(File(path=path.as_posix()))
 
     field_repository.update(field)
 

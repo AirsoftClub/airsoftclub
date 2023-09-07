@@ -1,6 +1,7 @@
-import os
+from pathlib import Path
 
 from app.models.file import File
+from app.models.user import User
 from app.repositories.users import UserRepository
 from app.schemas.users import (
     UserAuthenticatedResponse,
@@ -19,7 +20,7 @@ router = APIRouter()
 
 @router.get("/", response_model=list[UserResponse])
 def get_users(
-    current_user: UserJWTPayload = Depends(get_current_user),
+    current_user: User = Depends(get_current_user),
     user_repository: UserRepository = Depends(),
 ):
     return user_repository.get_all()
@@ -30,6 +31,9 @@ def register(
     user: UserRegisterRequest,
     user_repository: UserRepository = Depends(),
 ):
+    if user_repository.get_by_email(user.email) is not None:
+        raise HTTPException(status_code=400, detail="Email already registered")
+
     user.password = Hash.bcrypt(user.password)
 
     return user_repository.create(user)
@@ -62,49 +66,44 @@ def login(
 
 @router.get("/me", response_model=UserResponse)
 def me(
-    current_user: UserJWTPayload = Depends(get_current_user),
+    current_user: User = Depends(get_current_user),
     user_repository: UserRepository = Depends(),
 ):
-    return user_repository.get_by_id(current_user.id)
+    return current_user
 
 
 @router.post("/me", response_model=UserResponse)
 def update_me(
     user: UserUpdateRequest,
-    current_user: UserJWTPayload = Depends(get_current_user),
+    current_user: User = Depends(get_current_user),
     user_repository: UserRepository = Depends(),
 ):
-    db_user = user_repository.get_by_id(current_user.id)
+    current_user.name = user.name
+    current_user.lastname = user.lastname
 
-    if db_user is None:
-        raise HTTPException(status_code=404, detail="User not found")
-
-    db_user.name = user.name
-    db_user.lastname = user.lastname
-
-    return user_repository.update(db_user)
+    return user_repository.update(current_user)
 
 
 @router.post("/me/avatar", response_model=UserResponse)
 def me_avatar(
     avatar: UploadFile,
-    current_user: UserJWTPayload = Depends(get_current_user),
+    current_user: User = Depends(get_current_user),
     user_repository: UserRepository = Depends(),
 ):
     if avatar.content_type not in ["image/jpeg", "image/png"]:
         raise HTTPException(status_code=400, detail="Invalid file type")
 
-    directory = os.path.join("static", "avatars", str(current_user.id))
+    directory = Path("static/avatars") / str(current_user.id)
 
-    if not os.path.exists(directory):
-        os.makedirs(directory)
+    if not directory.exists():
+        directory.mkdir(parents=True)
 
-    file_path = os.path.join(directory, avatar.filename)
+    file_path = directory / str(avatar.filename)
 
     with open(file_path, "wb") as buffer:
         buffer.write(avatar.file.read())
 
     user = user_repository.get_by_id(current_user.id)
-    user.avatar = File(path=file_path)
+    user.avatar = File(path=file_path.as_posix())
 
     return user_repository.update(user)

@@ -27,3 +27,6 @@ class Booking(Base):
 
     team_id = Column(Integer, ForeignKey("teams.id"))
     team: Mapped["Team"] = relationship()
+
+    def __repr__(self) -> str:
+        return f"<Booking {self.id}>"

@@ -8,6 +8,9 @@ class BookingRepository:
     def __init__(self, db: Session = Depends(get_db)):
         self.db = db
 
+    def get_booking(self, id: int) -> Booking:
+        return self.db.query(Booking).filter(Booking.id == id).first()
+
     def get_bookigns_by_game_id(self, game_id: int) -> list[Booking]:
         return self.db.query(Booking).filter(Booking.game_id == game_id).all()
 
