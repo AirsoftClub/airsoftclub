@@ -14,14 +14,9 @@ class UserResponse(BaseModel):
     avatar: Optional[AvatarResponse] = None
 
 
-class UserAuthenticatedResponse(BaseModel):
-    model_config = ConfigDict(from_attributes=True)
-
-    id: int
-    name: str
-    lastname: str
-    email: str
+class TokenFamilyResponse(BaseModel):
     token: str
+    refresh_token: str
 
 
 class UserRegisterRequest(BaseModel):
@@ -51,6 +46,8 @@ class UserJWTPayload(BaseModel):
     model_config = ConfigDict(from_attributes=True)
 
     id: int
-    name: str
-    lastname: str
-    email: str
+    iat: int
+    exp: int
+    nbf: int
+    iss: str
+    aud: str
