@@ -3,16 +3,8 @@ from pathlib import Path
 from app.models.file import File
 from app.models.user import User
 from app.repositories.users import UserRepository
-from app.schemas.users import (
-    UserAuthenticatedResponse,
-    UserJWTPayload,
-    UserLoginRequest,
-    UserRegisterRequest,
-    UserResponse,
-    UserUpdateRequest,
-)
-from app.security.auth import get_current_user, token_encode
-from app.security.password import Hash
+from app.schemas.users import UserResponse, UserUpdateRequest
+from app.security.auth import get_current_user
 from fastapi import APIRouter, Depends, HTTPException, UploadFile
 
 router = APIRouter()
@@ -24,44 +16,6 @@ def get_users(
     user_repository: UserRepository = Depends(),
 ):
     return user_repository.get_all()
-
-
-@router.post("/register", response_model=UserResponse)
-def register(
-    user: UserRegisterRequest,
-    user_repository: UserRepository = Depends(),
-):
-    if user_repository.get_by_email(user.email) is not None:
-        raise HTTPException(status_code=400, detail="Email already registered")
-
-    user.password = Hash.bcrypt(user.password)
-
-    return user_repository.create(user)
-
-
-@router.post("/login", response_model=UserAuthenticatedResponse)
-def login(
-    user: UserLoginRequest,
-    user_repository: UserRepository = Depends(),
-):
-    db_user = user_repository.get_by_email(user.email)
-
-    if db_user is None:
-        raise HTTPException(status_code=404, detail="User not found")
-
-    if not Hash.verify(user.password, db_user.password):
-        raise HTTPException(status_code=404, detail="User not found")
-
-    db_user.token = token_encode(
-        UserJWTPayload(
-            id=db_user.id,
-            name=db_user.name,
-            lastname=db_user.lastname,
-            email=db_user.email,
-        )
-    )
-
-    return user_repository.update(db_user)
 
 
 @router.get("/me", response_model=UserResponse)

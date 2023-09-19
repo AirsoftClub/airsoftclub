@@ -21,7 +21,6 @@ class User(Base):
     lastname = Column(String)
     email = Column(String, unique=True)
     password = Column(String)
-    token = Column(String)
     created_at = Column(DateTime, default=datetime.utcnow)
     updated_at = Column(DateTime, default=datetime.utcnow, onupdate=datetime.utcnow)
 

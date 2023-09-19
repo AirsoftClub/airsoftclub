@@ -1,11 +1,17 @@
-"use client";
+import { LandingPage } from "@/components/pages/landing";
+import { GET_ME_QUERY_KEY, getMe } from "@/hooks/users/use-me";
+import { getQueryClient } from "@/providers/react-query/client";
+import { Hydrate } from "@/providers/react-query/hydrate";
+import { dehydrate } from "@tanstack/react-query";
 
-import { Button } from "@/components/ui/button";
+export default async function Home() {
+  const queryClient = getQueryClient();
+  await queryClient.prefetchQuery(GET_ME_QUERY_KEY, getMe);
+  const dehydratedState = dehydrate(queryClient);
 
-export default function Home() {
   return (
-    <main className="flex min-h-screen flex-col items-center justify-between p-24">
-      <Button>Click me</Button>
-    </main>
+    <Hydrate state={dehydratedState}>
+      <LandingPage />
+    </Hydrate>
   );
 }
