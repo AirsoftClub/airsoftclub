@@ -22,10 +22,9 @@ export async function POST() {
     return new Response(null, { status: 401 });
   }
 
-  const response = await axios.post(
-    `${process.env.NEXT_PUBLIC_API_URL}/auth/refresh`,
-    { refresh_token: token.value }
-  );
+  const response = await axios.post(`http://backend:8000/auth/refresh`, {
+    refresh_token: token.value,
+  });
 
   setAuthCookies({
     refresh_token: response.data.refresh_token,

@@ -1,5 +1,34 @@
 services:
 
+  backend:
+    build: ./backend
+    restart: always
+    ports:
+      - 8000:8000
+    volumes:
+      - ./backend:/app
+    depends_on:
+      - db
+    environment:
+      - app_secret=${APP_SECRET:-secret}
+      - app_url=${APP_URL:-http://localhost:8000}
+      - database_url=${DATABASE_URL:-postgresql://postgres:example@localhost:5432}
+      - google_client_id=${GOOGLE_CLIENT_ID}
+
+  frontend:
+    build: ./frontend
+    restart: always
+    ports:
+      - 3000:3000
+    volumes:
+      - ./frontend:/app
+    depends_on:
+      - backend
+    environment:
+      - NEXT_PUBLIC_APP_URL=${NEXT_APP_URL:-http://localhost:3000}
+      - NEXT_PUBLIC_API_URL=${NEXT_API_URL:-http://localhost:8000}
+      - NEXT_PUBLIC_GOOGLE_CLIENT_ID=${GOOGLE_CLIENT_ID}
+
   db:
     image: postgres
     restart: always
@@ -8,8 +37,11 @@ services:
     ports:
       - 5432:5432
 
-  adminer:
-    image: adminer
+  pgadmin:
+    image: dpage/pgadmin4
     restart: always
+    environment:
+      - PGADMIN_DEFAULT_EMAIL=user@example.com
+      - PGADMIN_DEFAULT_PASSWORD=SuperSecret 
     ports:
-      - 8080:8080
+      - 8080:80

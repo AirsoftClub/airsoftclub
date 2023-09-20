@@ -4,7 +4,7 @@ import { NextResponse } from "next/server";
 
 export async function POST(request: Request) {
   const response = await axios.post(
-    `${process.env.NEXT_PUBLIC_API_URL}/auth/google/login`,
+    `http://backend:8000/auth/google/login`,
     await request.json()
   );
 
