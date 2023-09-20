@@ -22,6 +22,8 @@ services:
       - 3000:3000
     volumes:
       - ./frontend:/app
+      - /app/.next
+      - /app/node_modules
     depends_on:
       - backend
     environment:
