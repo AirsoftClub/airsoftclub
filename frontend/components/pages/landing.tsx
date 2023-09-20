@@ -52,7 +52,7 @@ export const LandingPage = () => {
           <GoogleLogin />
         </>
       )}
-      hola
+
       {me && <pre>{JSON.stringify(me, null, 2)}</pre>}
     </main>
   );
