@@ -9,7 +9,10 @@ export const logoutAction = async () => {
     cookieStore.delete(cookie.name);
   });
 
-  return new Response(null, {
-    status: 200,
-  });
+  return {
+    redirect: {
+      destination: "/",
+      permanent: false,
+    },
+  };
 };
