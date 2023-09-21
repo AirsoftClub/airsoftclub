@@ -1,6 +1,11 @@
 {
-  "extends": "next/core-web-vitals",
-  "plugins": ["@tanstack/query"],
+  "extends": [
+    "next/core-web-vitals",
+    "plugin:storybook/recommended"
+  ],
+  "plugins": [
+    "@tanstack/query"
+  ],
   "rules": {
     "@tanstack/query/exhaustive-deps": "error",
     "@tanstack/query/prefer-query-object-syntax": "error"
