@@ -2,9 +2,9 @@ import { useIsServer } from "@/hooks/utils/use-is-server";
 import axios, { AxiosInstance } from "axios";
 import { authService } from "./auth/auth-service";
 
-const isServer = useIsServer();
+export const createAxiosInstance = (): AxiosInstance => {
+  const isServer = useIsServer();
 
-const createAxiosInstace = (): AxiosInstance => {
   const instance = axios.create({
     baseURL: isServer
       ? process.env.INTERNAL_API_URL
@@ -19,16 +19,12 @@ const createAxiosInstace = (): AxiosInstance => {
     let token: string | null = null;
 
     if (!isServer) {
-      token = localStorage.getItem("access_token");
+      const store = await import("@/store/store").then((m) => m.store);
+      token = store.getState().auth.token;
     }
 
     if (isServer) {
-      const { cookies } = await import("next/headers");
-      const tokenCookie = cookies().get("access_token");
-
-      if (tokenCookie) {
-        token = tokenCookie.value;
-      }
+      token = await authService.getToken();
     }
 
     if (token) {
@@ -41,8 +37,6 @@ const createAxiosInstace = (): AxiosInstance => {
   instance.interceptors.response.use(
     (response) => response,
     async (error) => {
-      console.log("hola", error);
-
       const prevRequest = error.config;
 
       if (error.response.status === 401 && !prevRequest.sent) {
@@ -51,10 +45,6 @@ const createAxiosInstace = (): AxiosInstance => {
         const data = await authService.refresh();
 
         prevRequest.headers["Authorization"] = `Bearer ${data.token}`;
-
-        if (!isServer) {
-          localStorage.setItem("access_token", data.token);
-        }
 
         return instance(prevRequest);
       }
@@ -66,4 +56,4 @@ const createAxiosInstace = (): AxiosInstance => {
   return instance;
 };
 
-export const axiosInstance = createAxiosInstace();
+export const axiosInstance = createAxiosInstance();

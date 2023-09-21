@@ -1,17 +1,14 @@
 "use client";
 
 import { authService } from "@/services/auth/auth-service";
-import {
-  Dispatch,
-  SetStateAction,
-  createContext,
-  useEffect,
-  useState,
-} from "react";
+import { login } from "@/store/reducers/auth-reducer";
+import { RootState } from "@/store/store";
+import { createContext, useEffect } from "react";
+import { useDispatch, useSelector } from "react-redux";
 
 type AuthContextType = {
   token: string | null;
-  setToken: Dispatch<SetStateAction<string | null>>;
+  setToken: (token: string) => void;
 };
 
 type AuthContextProps = {
@@ -21,12 +18,19 @@ type AuthContextProps = {
 export const AuthContext = createContext({} as AuthContextType);
 
 export const AuthContextProvider = ({ children }: AuthContextProps) => {
-  const [token, setToken] = useState<string | null>(null);
+  const token = useSelector((state: RootState) => state.auth.token);
+  const dispatch = useDispatch();
+
+  const setToken = (token: string) => {
+    dispatch(login(token));
+  };
 
   useEffect(() => {
-    authService.getToken().then((token) => {
-      setToken(token);
-    });
+    if (!token) {
+      authService.getToken().then((newToken) => {
+        dispatch(login(newToken));
+      });
+    }
   }, []);
 
   return (
