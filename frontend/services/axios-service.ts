@@ -18,7 +18,7 @@ const createAxiosInstace = (): AxiosInstance => {
   instance.interceptors.request.use(async (config) => {
     let token: string | null = null;
 
-    if (isServer) {
+    if (!isServer) {
       token = localStorage.getItem("access_token");
     }
 
@@ -41,6 +41,8 @@ const createAxiosInstace = (): AxiosInstance => {
   instance.interceptors.response.use(
     (response) => response,
     async (error) => {
+      console.log("hola", error);
+
       const prevRequest = error.config;
 
       if (error.response.status === 401 && !prevRequest.sent) {
@@ -50,7 +52,7 @@ const createAxiosInstace = (): AxiosInstance => {
 
         prevRequest.headers["Authorization"] = `Bearer ${data.token}`;
 
-        if (isServer) {
+        if (!isServer) {
           localStorage.setItem("access_token", data.token);
         }
 
