@@ -1,5 +1,8 @@
 /** @type {import('next').NextConfig} */
 const nextConfig = {
+  experimental: {
+    serverActions: true,
+  },
   webpack: (config, context) => {
     config.watchOptions = {
       poll: 500,

@@ -30,6 +30,7 @@ services:
       - NEXT_PUBLIC_APP_URL=${NEXT_APP_URL:-http://localhost:3000}
       - NEXT_PUBLIC_API_URL=${NEXT_API_URL:-http://localhost:8000}
       - NEXT_PUBLIC_GOOGLE_CLIENT_ID=${GOOGLE_CLIENT_ID}
+      - INTERNAL_API_URL=${INTERNAL_API_URL:-http://backend:8000}
 
   db:
     image: postgres

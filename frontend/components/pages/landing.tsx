@@ -1,10 +1,12 @@
 "use client";
 
+import { loginAction } from "@/actions/login-action";
+import { logoutAction } from "@/actions/logout-action";
+import { refreskTokenAction } from "@/actions/refresh-token-action";
 import { GoogleLogin } from "@/components/auth/google/GoogleLogin";
 import { Button } from "@/components/ui/button";
 import { useAuth } from "@/hooks/auth/use-auth";
 import { useMe } from "@/hooks/users/use-me";
-import { authService } from "@/services/auth/auth-service";
 import { googleLogout } from "@react-oauth/google";
 import { useQueryClient } from "@tanstack/react-query";
 
@@ -14,24 +16,22 @@ export const LandingPage = () => {
   const queryClient = useQueryClient();
 
   const handleRefresh = () => {
-    authService.refresh().then((res) => {
+    refreskTokenAction().then((res) => {
       setToken(res.token);
     });
   };
 
   const handleLogin = () => {
-    authService
-      .login({
-        email: "test",
-        password: "test",
-      })
-      .then((res) => {
-        setToken(res.token);
-      });
+    loginAction({
+      email: "test",
+      password: "test",
+    }).then((res) => {
+      setToken(res.token);
+    });
   };
 
   const handleLogout = () => {
-    authService.logout().then((res) => {
+    logoutAction().then((res) => {
       googleLogout();
       localStorage.clear();
       queryClient.clear();

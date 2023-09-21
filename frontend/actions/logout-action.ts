@@ -1,6 +1,8 @@
+"use server";
+
 import { cookies } from "next/headers";
 
-export async function POST() {
+export const logoutAction = async () => {
   const cookieStore = cookies();
 
   cookieStore.getAll().forEach((cookie) => {
@@ -10,4 +12,4 @@ export async function POST() {
   return new Response(null, {
     status: 200,
   });
-}
+};

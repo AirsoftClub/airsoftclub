@@ -1,3 +1,4 @@
+import { refreskTokenAction as refreshTokenAction } from "@/actions/refresh-token-action";
 import axios, { AxiosInstance } from "axios";
 
 const createAxiosInstace = (): AxiosInstance => {
@@ -40,7 +41,7 @@ const createAxiosInstace = (): AxiosInstance => {
         originalRequest._retry = true;
 
         if (typeof window !== "undefined") {
-          const { data } = await axios.post("/api/auth/refresh");
+          const data = await refreshTokenAction();
           localStorage.setItem("access_token", data.token);
           return axios(originalRequest);
         }

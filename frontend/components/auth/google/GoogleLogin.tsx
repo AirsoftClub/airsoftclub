@@ -1,7 +1,7 @@
 "use client";
 
+import { googleLoginAction } from "@/actions/google-login-action";
 import { useAuth } from "@/hooks/auth/use-auth";
-import { authService } from "@/services/auth/auth-service";
 import {
   CredentialResponse,
   GoogleLogin as GoogleLoginButton,
@@ -17,7 +17,7 @@ export const GoogleLogin = () => {
       return;
     }
 
-    const res = await authService.googleLogin({
+    const res = await googleLoginAction({
       token: credentialsResponse.credential,
     });
 
