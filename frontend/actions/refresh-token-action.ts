@@ -5,7 +5,7 @@ import { setAuthCookies } from "@/services/auth/cookies";
 import axios from "axios";
 import { cookies } from "next/headers";
 
-export const refreskTokenAction = async () => {
+export const refreshTokenAction = async () => {
   const refreshToken = cookies().get("refresh_token");
 
   if (!refreshToken) {
@@ -31,10 +31,7 @@ export const refreskTokenAction = async () => {
     }
   );
 
-  setAuthCookies({
-    refresh_token: response.data.refresh_token,
-    access_token: response.data.token,
-  });
+  setAuthCookies(response.data);
 
   return response.data;
 };
