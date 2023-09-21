@@ -1,17 +1,18 @@
+import { getTokenAction } from "@/actions/get-token-action";
+import { loginAction } from "@/actions/login-action";
+import { logoutAction } from "@/actions/logout-action";
+import { refreshTokenAction } from "@/actions/refresh-token-action";
 import { GoogleLoginRequest } from "@/interfaces/auth/google-login";
 import { LoginRequest } from "@/interfaces/auth/login";
 import { TokenFamilyResponse } from "@/interfaces/auth/token-family";
 import axios from "axios";
 
 const login = async (request: LoginRequest) => {
-  const { data } = await axios.post<TokenFamilyResponse>(
-    "/api/auth/login",
-    request
-  );
+  const response = await loginAction(request);
 
-  localStorage.setItem("access_token", data.token);
+  localStorage.setItem("access_token", response.token);
 
-  return data;
+  return response;
 };
 
 const googleLogin = async (request: GoogleLoginRequest) => {
@@ -26,23 +27,18 @@ const googleLogin = async (request: GoogleLoginRequest) => {
 };
 
 const refresh = async () => {
-  const { data } = await axios.post<TokenFamilyResponse>(
-    "/api/auth/refresh",
-    {}
-  );
+  const response = await refreshTokenAction();
 
-  return data;
+  return response;
 };
 
 const getToken = async () => {
-  const { data } = await axios.get("/api/auth/token");
-
-  return data;
+  return await getTokenAction();
 };
 
 const logout = async () => {
+  await logoutAction();
   localStorage.clear();
-  await axios.post("/api/auth/logout");
 };
 
 export const authService = {

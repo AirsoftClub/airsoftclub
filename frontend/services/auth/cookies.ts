@@ -1,14 +1,7 @@
+import { LoginResponse } from "@/interfaces/auth/login";
 import { cookies } from "next/headers";
 
-type SetCookiesAuth = {
-  refresh_token: string;
-  access_token: string;
-};
-
-export const setAuthCookies = ({
-  refresh_token,
-  access_token,
-}: SetCookiesAuth) => {
+export const setAuthCookies = ({ token, refresh_token }: LoginResponse) => {
   const cookiesStore = cookies();
 
   cookiesStore.set("refresh_token", refresh_token, {
@@ -17,7 +10,7 @@ export const setAuthCookies = ({
     secure: true,
   });
 
-  cookiesStore.set("access_token", access_token, {
+  cookiesStore.set("access_token", token, {
     httpOnly: true,
     sameSite: "none",
     secure: true,

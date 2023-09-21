@@ -17,10 +17,7 @@ export const googleLoginAction = async (
     throw new Error("Google login failed");
   }
 
-  setAuthCookies({
-    refresh_token: response.data.refresh_token,
-    access_token: response.data.token,
-  });
+  setAuthCookies(response.data);
 
   return response.data;
 };

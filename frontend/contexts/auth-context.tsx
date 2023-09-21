@@ -24,8 +24,8 @@ export const AuthContextProvider = ({ children }: AuthContextProps) => {
   const [token, setToken] = useState<string | null>(null);
 
   useEffect(() => {
-    authService.getToken().then((res) => {
-      setToken(res.token);
+    authService.getToken().then((token) => {
+      setToken(token);
     });
   }, []);
 
