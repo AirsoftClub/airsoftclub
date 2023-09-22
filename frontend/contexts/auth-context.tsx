@@ -1,8 +1,8 @@
 "use client";
 
+import { login } from "@/lib/rtk/reducers/auth-reducer";
+import { RootState } from "@/lib/rtk/store";
 import { authService } from "@/services/auth/auth-service";
-import { login } from "@/store/reducers/auth-reducer";
-import { RootState } from "@/store/store";
 import { createContext, useEffect } from "react";
 import { useDispatch, useSelector } from "react-redux";
 

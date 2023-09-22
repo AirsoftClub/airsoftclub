@@ -6,16 +6,16 @@ import { useAuth } from "@/hooks/auth/use-auth";
 import { useMe } from "@/hooks/users/use-me";
 import { authService } from "@/services/auth/auth-service";
 import { googleLogout } from "@react-oauth/google";
-import { useQueryClient } from "@tanstack/react-query";
 
 export const LandingPage = () => {
   const { token, setToken } = useAuth();
   const { data: me } = useMe();
-  const queryClient = useQueryClient();
 
   const handleRefresh = () => {
     authService.refresh().then((res) => {
-      setToken(res.token);
+      if (res) {
+        setToken(res.token);
+      }
     });
   };
 
@@ -33,9 +33,6 @@ export const LandingPage = () => {
   const handleLogout = () => {
     authService.logout().then((res) => {
       googleLogout();
-      localStorage.clear();
-      queryClient.clear();
-      setToken(null);
     });
   };
 

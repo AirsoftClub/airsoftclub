@@ -19,7 +19,7 @@ export const createAxiosInstance = (): AxiosInstance => {
     let token: string | null = null;
 
     if (!isServer) {
-      const store = await import("@/store/store").then((m) => m.store);
+      const store = await import("@/lib/rtk/store").then((m) => m.store);
       token = store.getState().auth.token;
     }
 
@@ -43,6 +43,24 @@ export const createAxiosInstance = (): AxiosInstance => {
         prevRequest.sent = true;
 
         const data = await authService.refresh();
+
+        if (!data) {
+          if (!isServer) {
+            authService.logout();
+            window.queryClient.clear();
+          }
+
+          return Promise.reject(error);
+        }
+
+        if (!isServer) {
+          const store = await import("@/lib/rtk/store").then((m) => m.store);
+          const { login } = await import(
+            "@/lib/rtk/reducers/auth-reducer"
+          ).then((m) => m);
+
+          store.dispatch(login(data.token));
+        }
 
         prevRequest.headers["Authorization"] = `Bearer ${data.token}`;
 

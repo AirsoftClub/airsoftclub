@@ -9,7 +9,7 @@ export const refreshTokenAction = async () => {
   const refreshToken = cookies().get("refresh_token");
 
   if (!refreshToken) {
-    throw new Error("No refresh refresh token found");
+    return null;
   }
 
   const payloadString = Buffer.from(
@@ -20,8 +20,11 @@ export const refreshTokenAction = async () => {
   const payload = JSON.parse(payloadString);
 
   if (payload.exp * 1000 < Date.now()) {
-    cookies().delete("refresh_token");
-    throw new Error("Refresh token expired");
+    cookies()
+      .getAll()
+      .forEach((cookie) => {
+        cookies().delete(cookie.name);
+      });
   }
 
   const response = await axios.post<LoginResponse>(
