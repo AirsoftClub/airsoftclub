@@ -1,4 +1,4 @@
-import { axiosInstance } from "@/services/axios-service";
+import { axiosInstance } from "@/services/axios/axios-service";
 import { useQuery } from "@tanstack/react-query";
 
 export const GET_ME_QUERY_KEY = ["me"];

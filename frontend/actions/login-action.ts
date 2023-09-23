@@ -1,7 +1,7 @@
 "use server";
 
+import { setAuthCookies } from "@/hooks/auth/use-cookies";
 import { LoginRequest, LoginResponse } from "@/interfaces/auth/login";
-import { setAuthCookies } from "@/services/auth/cookies";
 import axios from "axios";
 
 export const loginAction = async (loginRequest: LoginRequest) => {

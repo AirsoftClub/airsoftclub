@@ -1,8 +1,8 @@
 "use server";
 
+import { setAuthCookies } from "@/hooks/auth/use-cookies";
 import { GoogleLoginRequest } from "@/interfaces/auth/google-login";
 import { LoginResponse } from "@/interfaces/auth/login";
-import { setAuthCookies } from "@/services/auth/cookies";
 import axios from "axios";
 
 export const googleLoginAction = async (

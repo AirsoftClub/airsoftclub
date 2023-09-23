@@ -1,6 +1,6 @@
 import { useIsServer } from "@/hooks/utils/use-is-server";
 import axios, { AxiosInstance } from "axios";
-import { authService } from "./auth/auth-service";
+import { authService } from "../auth/auth-service";
 
 export const createAxiosInstance = (): AxiosInstance => {
   const isServer = useIsServer();
@@ -19,8 +19,7 @@ export const createAxiosInstance = (): AxiosInstance => {
     let token: string | null = null;
 
     if (!isServer) {
-      const store = await import("@/lib/rtk/store").then((m) => m.store);
-      token = store.getState().auth.token;
+      token = global.token;
     }
 
     if (isServer) {
@@ -47,19 +46,13 @@ export const createAxiosInstance = (): AxiosInstance => {
         if (!data) {
           if (!isServer) {
             authService.logout();
-            window.queryClient.clear();
           }
 
           return Promise.reject(error);
         }
 
         if (!isServer) {
-          const store = await import("@/lib/rtk/store").then((m) => m.store);
-          const { login } = await import(
-            "@/lib/rtk/reducers/auth-reducer"
-          ).then((m) => m);
-
-          store.dispatch(login(data.token));
+          global.token = data.token;
         }
 
         prevRequest.headers["Authorization"] = `Bearer ${data.token}`;

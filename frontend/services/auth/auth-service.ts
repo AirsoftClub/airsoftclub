@@ -5,8 +5,6 @@ import { logoutAction } from "@/actions/logout-action";
 import { refreshTokenAction } from "@/actions/refresh-token-action";
 import { GoogleLoginRequest } from "@/interfaces/auth/google-login";
 import { LoginRequest } from "@/interfaces/auth/login";
-import { logout as emptyAuthState } from "@/lib/rtk/reducers/auth-reducer";
-import { store } from "@/lib/rtk/store";
 
 const login = async (request: LoginRequest) => {
   const response = await loginAction(request);
@@ -31,7 +29,8 @@ const getToken = async () => {
 };
 
 const logout = async () => {
-  store.dispatch(emptyAuthState());
+  global.token = null;
+  global.queryClient.clear();
   await logoutAction();
 };
 

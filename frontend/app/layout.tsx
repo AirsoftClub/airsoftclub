@@ -2,7 +2,6 @@
 
 import { AuthContextProvider } from "@/contexts/auth-context";
 import { ReactQueryProvider } from "@/providers/react-query/provider";
-import { ReduxProvider } from "@/providers/rtk/redux-provider";
 import { GoogleOAuthProvider } from "@react-oauth/google";
 import { Inter } from "next/font/google";
 import "./globals.css";
@@ -17,15 +16,13 @@ export default function RootLayout({
   return (
     <html lang="en">
       <body className={inter.className}>
-        <ReduxProvider>
-          <AuthContextProvider>
-            <GoogleOAuthProvider
-              clientId={process.env.NEXT_PUBLIC_GOOGLE_CLIENT_ID}
-            >
-              <ReactQueryProvider>{children}</ReactQueryProvider>
-            </GoogleOAuthProvider>
-          </AuthContextProvider>
-        </ReduxProvider>
+        <AuthContextProvider>
+          <GoogleOAuthProvider
+            clientId={process.env.NEXT_PUBLIC_GOOGLE_CLIENT_ID}
+          >
+            <ReactQueryProvider>{children}</ReactQueryProvider>
+          </GoogleOAuthProvider>
+        </AuthContextProvider>
       </body>
     </html>
   );
