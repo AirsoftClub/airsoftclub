@@ -27,11 +27,7 @@ export const GoogleLogin = () => {
   return (
     <>
       {!token && (
-        <GoogleLoginButton
-          onSuccess={authenticateAgainstBackend}
-          useOneTap
-          auto_select
-        />
+        <GoogleLoginButton onSuccess={authenticateAgainstBackend} useOneTap />
       )}
     </>
   );
