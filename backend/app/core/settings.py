@@ -2,9 +2,9 @@ from pydantic_settings import BaseSettings, SettingsConfigDict
 
 
 class Settings(BaseSettings):
-    app_secret: str = ""
-    app_url: str = ""
-    database_url: str = ""
+    app_secret: str = "replace-me"
+    app_url: str = "http://localhost:8000"
+    database_url: str = "sqlite:///:memory:"
     google_client_id: str = ""
 
     model_config = SettingsConfigDict(env_file=".env")

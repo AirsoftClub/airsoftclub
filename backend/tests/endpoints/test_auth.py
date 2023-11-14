@@ -1,7 +1,8 @@
 import mock
-from app.models.user import User
 from fastapi.testclient import TestClient
 from sqlalchemy.orm.session import Session
+
+from app.models.user import User
 from tests.factories.google_token import GoogleTokenFactory
 from tests.factories.user import UserFactory
 
@@ -117,6 +118,8 @@ def test_refresh_token(client: TestClient, db_session: Session):
     assert response.status_code == 200
 
     refresh_token = response.json()["refresh_token"]
+
+    print(refresh_token)
 
     response = client.post("/auth/refresh", json={"refresh_token": refresh_token})
 

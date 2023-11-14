@@ -7,7 +7,7 @@ class AvatarResponse(BaseModel):
     url: str
 
 
-class FieldPhotoResponse(BaseModel):
+class FileResponse(BaseModel):
     model_config = ConfigDict(from_attributes=True)
 
     url: str
