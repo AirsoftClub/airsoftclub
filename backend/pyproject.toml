@@ -21,6 +21,7 @@ coverage = "^7.3.0"
 mock = "^5.1.0"
 pytest-pretty = "^1.2.0"
 factory-boy = "^3.3.0"
+pytest-xdist = "^3.5.0"
 
 [build-system]
 requires = ["poetry-core"]
