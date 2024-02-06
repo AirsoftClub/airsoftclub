@@ -43,6 +43,6 @@ services:
     restart: always
     environment:
       - PGADMIN_DEFAULT_EMAIL=user@example.com
-      - PGADMIN_DEFAULT_PASSWORD=SuperSecret 
+      - PGADMIN_DEFAULT_PASSWORD=SuperSecret
     ports:
       - 8080:80

@@ -1,4 +1,5 @@
-import mock
+from unittest import mock
+
 from app.models.user import User
 from fastapi.testclient import TestClient
 from sqlalchemy.orm.session import Session
@@ -88,10 +89,11 @@ def test_update_users_me_unauthorized(client: TestClient):
 @mock.patch("builtins.open", mock.mock_open(read_data="data"))
 @mock.patch("pathlib.Path.mkdir", mock.Mock())
 def test_update_users_me_avatar(client: TestClient, authenticate_user: User):
-    response = client.post(
-        "/users/me/avatar",
-        files={"avatar": ("test.png", open("test.png", "rb"), "image/png")},
-    )
+    with open("test.png", "rb") as f:
+        response = client.post(
+            "/users/me/avatar",
+            files={"avatar": ("test.png", f, "image/png")},
+        )
 
     assert response.status_code == 200
 
@@ -106,10 +108,11 @@ def test_update_users_me_avatar(client: TestClient, authenticate_user: User):
 
 @mock.patch("builtins.open", mock.mock_open(read_data="data"))
 def test_update_users_me_avatar_unauthorized(client: TestClient):
-    response = client.post(
-        "/users/me/avatar",
-        files={"avatar": ("test.png", open("test.png", "rb"), "image/png")},
-    )
+    with open("test.png", "rb") as f:
+        response = client.post(
+            "/users/me/avatar",
+            files={"avatar": ("test.png", f, "image/png")},
+        )
 
     assert response.status_code == 401
     assert response.json() == {"detail": "Not authenticated"}
@@ -119,10 +122,11 @@ def test_update_users_me_avatar_unauthorized(client: TestClient):
 def test_update_users_me_avatar_invalid_file_type(
     client: TestClient, authenticate_user: User
 ):
-    response = client.post(
-        "/users/me/avatar",
-        files={"avatar": ("test.txt", open("test.txt", "rb"), "text/plain")},
-    )
+    with open("test.txt", "rb") as f:
+        response = client.post(
+            "/users/me/avatar",
+            files={"avatar": ("test.txt", f, "text/plain")},
+        )
 
     assert response.status_code == 400
     assert response.json() == {"detail": "Invalid file type"}

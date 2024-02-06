@@ -1,3 +1,6 @@
+from datetime import datetime
+
+import freezegun
 import pytest
 from app.core.database import get_db
 from app.models.base import Base
@@ -28,6 +31,15 @@ def db_session():
     SessionLocal = sessionmaker(autocommit=False, autoflush=False, bind=engine)
 
     return SessionLocal()
+
+
+@pytest.fixture(autouse=True)
+def freeze_time():
+    # To avoid failure on time based tests
+
+    now = datetime.utcnow()
+    with freezegun.freeze_time(now):
+        yield now
 
 
 @pytest.fixture(autouse=True)

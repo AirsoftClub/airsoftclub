@@ -1,6 +1,5 @@
-from fastapi.testclient import TestClient
-
 from app.models.user import User
+from fastapi.testclient import TestClient
 from tests.factories.squad import SquadFactory
 
 

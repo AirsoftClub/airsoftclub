@@ -28,7 +28,7 @@ poetry install
 3. Setup the database:
 
 ```shell
-setup/setup_db.py
+setup/build.sh
 ```
 
 4. Run the uvicorn:

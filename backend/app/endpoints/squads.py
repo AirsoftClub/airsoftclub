@@ -1,7 +1,5 @@
 from typing import List
 
-from fastapi import APIRouter, Depends, HTTPException, UploadFile
-
 from app.models.squad import Squad
 from app.models.user import User
 from app.permissions.squads import SquadPermissions
@@ -10,6 +8,7 @@ from app.schemas.files import FileResponse
 from app.schemas.squads import SquadResponse, SquadUpsertRequest
 from app.schemas.users import UserResponse
 from app.security.auth import get_current_user
+from fastapi import APIRouter, Depends, HTTPException, UploadFile
 
 router = APIRouter()
 

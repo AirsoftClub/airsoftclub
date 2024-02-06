@@ -1,6 +1,5 @@
-from fastapi import APIRouter
-
 from app.endpoints import auth, bookings, fields, games, squads, teams, users
+from fastapi import APIRouter
 
 router = APIRouter()
 

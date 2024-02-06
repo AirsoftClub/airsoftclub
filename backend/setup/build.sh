@@ -1,5 +1,7 @@
 #!/bin/bash
 
+set -e
+
 # Define colors
 RED='\033[0;31m'
 GREEN='\033[0;32m'
@@ -18,6 +20,9 @@ log_info() {
     echo -e "INFO  [setup.setup_db] $1"
 }
 
+pre-commit install
+log_success "pre-commit hooks installed succesfully"
+
 # Load environment variables from .env file
 if [ -f .env ]; then
     export $(cat .env | grep -v '^#' | awk '/=/ {print $1}')
@@ -32,14 +37,8 @@ fi
 
 # Create the database user
 setup/utils/create_db_user.sh
-if [ $? -eq 1 ]; then
-    exit 1
-fi
 
 # Create the database
 setup/utils/create_db.sh
-if [ $? -eq 1 ]; then
-    exit 1
-fi
 
 log_success "Setup completed successfully."

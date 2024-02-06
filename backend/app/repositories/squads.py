@@ -2,12 +2,11 @@ from datetime import datetime
 from pathlib import Path
 from typing import List
 
-from fastapi import Depends, UploadFile
-from sqlalchemy.orm import Session
-
 from app.core.database import get_db
 from app.models.file import File
 from app.models.squad import Squad
+from fastapi import Depends, UploadFile
+from sqlalchemy.orm import Session
 
 
 class SquadRepository:
