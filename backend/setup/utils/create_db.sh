@@ -27,7 +27,7 @@ sudo -u postgres psql -c "CREATE DATABASE $DB_NAME OWNER $DB_USER;" &>/dev/null
 if [ $? -eq 0 ]; then
     log_success "Successfully created database: $DB_NAME"
 else
-    log_error "Failed to create database: $DB_NAME"
+    log_error "Failed to create database: $DB_NAME (Already exists?)"
     exit 1
 fi
 
@@ -51,7 +51,7 @@ else
     exit 1
 fi
 
-# Seed the database
+# TODO: Seed the database
 # log_info "Seeding the database for $DB_NAME"
 # python3 seed.py
 # if [ $? -eq 0 ]; then

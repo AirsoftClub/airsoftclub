@@ -30,10 +30,10 @@ else
     exit 1
 fi
 
-# Create the database user
+# Create the database user (ignore errors if user already exists)
 setup/utils/create_db_user.sh
 
-# Create the database
+# Create the database (ignore errors if database already exists)
 setup/utils/create_db.sh
 
 log_success "Database setup completed successfully."

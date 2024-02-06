@@ -27,6 +27,6 @@ sudo -u postgres psql -c "CREATE USER $DB_USER WITH PASSWORD '$DB_PASS';" &>/dev
 if [ $? -eq 0 ]; then
     log_success "Successfully created user: $DB_USER"
 else
-    log_error "Failed to create user: $DB_USER"
+    log_error "Failed to create user: $DB_USER (Already exists?)"
     exit 1
 fi
