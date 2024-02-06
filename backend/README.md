@@ -6,7 +6,7 @@ This is the backend component of the Airsoft Club project.
 
 Before running the application, make sure you have the following installed:
 
-- Python 3.x
+- Pyenv
 - PostgreSQL
 - Docker
 
@@ -15,23 +15,38 @@ Before running the application, make sure you have the following installed:
 1. Clone the repository:
 
 ```shell
-git clone https://github.com/your-username/airsoftclub-backend.git
+git clone git@github.com:AirsoftClub/airsoftclub.git
+cd airsoftclub/
 ```
 
-2. Install the required dependencies:
+2. Create your venv:
+```shell
+pyenv install 3.12.1
+pyenv virtualenv 3.12.1 airsoftclub-3.12.1
+```
+
+
+3. Install the required dependencies:
 
 ```shell
 pip install poetry
 poetry install
 ```
 
-3. Setup the database:
-
+4. Enable pre-commits:
 ```shell
-setup/build.sh
+pip install pre-commit
+pre-commit install --hook-type pre-push
+pre-commit autoupdate
 ```
 
-4. Run the uvicorn:
+5. Setup the database:
+
+```shell
+setup/setup_db.sh
+```
+
+6. Run the uvicorn:
 
 ```shell
 uvicorn main:create_app --reload --factory
