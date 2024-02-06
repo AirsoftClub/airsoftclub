@@ -1,4 +1,4 @@
-default_stages: [commit]
+default_stages: [push]
 repos:
   - repo: https://github.com/pre-commit/pre-commit-hooks
     rev: v4.5.0
@@ -19,7 +19,7 @@ repos:
     rev: v3.15.0
     hooks:
       - id: pyupgrade
-        args: [--py36-plus]
+        args: [ --py36-plus ]
         exclude: ^install-local.py$
   - repo: https://github.com/PyCQA/isort
     rev: 5.13.2

@@ -35,7 +35,6 @@ build-backend = "poetry.core.masonry.api"
 [tool.coverage.run]
 omit = [
     ".venv/*",
-    "alembic/*",
 ]
 
 [tool.ruff]
