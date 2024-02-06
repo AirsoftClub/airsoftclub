@@ -33,11 +33,12 @@ pip install poetry
 poetry install
 ```
 
-4. Enable pre-commits:
+4. Enable pre-commits and run initial check:
 ```shell
 pip install pre-commit
-pre-commit install --hook-type pre-push
+pre-commit install --hook-type pre-commit
 pre-commit autoupdate
+pre-commit run --all-files
 ```
 
 5. Setup the database:
