@@ -39,7 +39,7 @@ omit = [
 
 [tool.ruff]
 src = ["app", "tests"]
-line-length = 88 # same as flake8
+line-length = 80 # same as flake8
 ignore = [
     "E501",
     "F722",

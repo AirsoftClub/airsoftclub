@@ -1,3 +1,6 @@
+# Pre-commit hooks. To update rev versions, run:
+# `pre-commit autoupdate`
+
 default_stages: [pre-commit]
 repos:
   - repo: https://github.com/pre-commit/pre-commit-hooks
