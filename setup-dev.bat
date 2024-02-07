@@ -4,4 +4,4 @@ if not exist .env (
 
 docker compose up -d
 
-docker compose run backend alembic upgrade head
+docker compose run backend sh setup/setup_db.sh

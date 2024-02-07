@@ -1,48 +1,82 @@
-services:
+version: "3.8"
 
+services:
   backend:
-    build: ./backend
-    restart: always
+    build:
+      context: ./backend
+      dockerfile: Dockerfile
+    restart: unless-stopped
     ports:
       - 8000:8000
     volumes:
-      - ./backend:/app
+      - ./backend:/app:delegated
+      - poetry_cache:/root/.cache/pypoetry
     depends_on:
       - db
     environment:
-      - app_secret=${APP_SECRET:-secret}
-      - app_url=${APP_URL:-http://localhost:8000}
-      - database_url=${DATABASE_URL:-postgresql://postgres:example@localhost:5432}
-      - google_client_id=${GOOGLE_CLIENT_ID}
+      APP_SECRET: ${APP_SECRET:-secret}
+      APP_URL: ${APP_URL:-http://localhost:8000}
+      DATABASE_URL: postgresql://${DB_USER}:${DB_PASS}@db:${DB_PORT}/${DB_NAME}
+      GOOGLE_CLIENT_ID: ${GOOGLE_CLIENT_ID}
+    networks:
+      - airsoftclub_network
 
   frontend:
-    build: ./frontend
-    restart: always
+    build:
+      context: ./frontend
+      dockerfile: Dockerfile
+    restart: unless-stopped
     ports:
       - 3000:3000
     volumes:
-      - ./frontend:/app
+      - ./frontend:/app:delegated
+      - next_cache:/app/.next
     depends_on:
       - backend
     environment:
-      - NEXT_PUBLIC_APP_URL=${NEXT_APP_URL:-http://localhost:3000}
-      - NEXT_PUBLIC_API_URL=${NEXT_API_URL:-http://localhost:8000}
-      - NEXT_PUBLIC_GOOGLE_CLIENT_ID=${GOOGLE_CLIENT_ID}
-      - INTERNAL_API_URL=${INTERNAL_API_URL:-http://backend:8000}
+      NEXT_PUBLIC_APP_URL: ${NEXT_APP_URL:-http://localhost:3000}
+      NEXT_PUBLIC_API_URL: ${NEXT_API_URL:-http://localhost:8000}
+      NEXT_PUBLIC_GOOGLE_CLIENT_ID: ${GOOGLE_CLIENT_ID}
+      INTERNAL_API_URL: ${INTERNAL_API_URL:-http://backend:8000}
+    networks:
+      - airsoftclub_network
 
   db:
-    image: postgres
-    restart: always
+    image: postgres:16.1-alpine
+    restart: unless-stopped
     environment:
-      POSTGRES_PASSWORD: example
+      POSTGRES_DB: ${DB_NAME}
+      POSTGRES_USER: ${DB_USER}
+      POSTGRES_PASSWORD: ${DB_PASS}
     ports:
       - 5432:5432
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    networks:
+      - airsoftclub_network
 
   pgadmin:
     image: dpage/pgadmin4
-    restart: always
+    restart: unless-stopped
     environment:
-      - PGADMIN_DEFAULT_EMAIL=user@example.com
-      - PGADMIN_DEFAULT_PASSWORD=SuperSecret
+      PGADMIN_DEFAULT_EMAIL: ${PGADMIN_DEFAULT_EMAIL:-user@example.com}
+      PGADMIN_DEFAULT_PASSWORD: ${PGADMIN_DEFAULT_PASSWORD:-dummy}
     ports:
       - 8080:80
+    depends_on:
+      - db
+    volumes:
+      - pgadmin_data:/var/lib/pgadmin
+    networks:
+      - airsoftclub_network
+
+networks:
+  airsoftclub_network:
+    name: airsoftclub_network
+    driver: bridge
+
+volumes:
+  next_cache:
+  pgadmin_data:
+  poetry_cache:
+  postgres_data:
