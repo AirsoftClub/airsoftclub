@@ -1,10 +1,14 @@
+from datetime import datetime, timedelta
+
 from app.models.user import User
 from fastapi.testclient import TestClient
 from tests.factories.game import GameFactory
 
 
-def test_get_joinable_games(client: TestClient, authenticate_user: User):
-    games = GameFactory.create_batch(2)
+def test_get_joinable_games_tomorrow(client: TestClient, authenticate_user: User):
+    tomorrow = datetime.utcnow() + timedelta(days=1)
+
+    games = GameFactory.create_batch(2, played_at=tomorrow)
 
     response = client.get("/games")
 
@@ -26,6 +30,18 @@ def test_get_joinable_games(client: TestClient, authenticate_user: User):
             "created_at": games[1].created_at.isoformat(),
         },
     ]
+
+
+def test_get_joinable_games_yesterday(client: TestClient, authenticate_user: User):
+    yesterday = datetime.utcnow() - timedelta(days=1)
+
+    GameFactory.create_batch(2, played_at=yesterday)
+
+    response = client.get("/games")
+
+    assert response.status_code == 200
+
+    assert response.json() == []
 
 
 def test_get_joinable_games_unauthorized(client: TestClient):

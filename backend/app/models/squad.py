@@ -1,11 +1,10 @@
 from datetime import datetime
 from typing import TYPE_CHECKING, List
 
+from app.models.base import Base
 from sqlalchemy import Column, DateTime, ForeignKey, Integer, String, Table
 from sqlalchemy.ext.associationproxy import AssociationProxy, association_proxy
 from sqlalchemy.orm import Mapped, relationship
-
-from app.models.base import Base
 
 if TYPE_CHECKING:
     from app.models.file import File

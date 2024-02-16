@@ -1,10 +1,9 @@
 from datetime import datetime
 from typing import Optional
 
+from app.models.squad import Squad, SquadMember
 from factory import Faker, LazyFunction, RelatedFactoryList, Sequence, SubFactory
 from factory.alchemy import SQLAlchemyModelFactory
-
-from app.models.squad import Squad, SquadMember
 
 
 class SquadMemberFactory(SQLAlchemyModelFactory):
@@ -13,9 +12,6 @@ class SquadMemberFactory(SQLAlchemyModelFactory):
         sqlalchemy_session_persistence = "commit"
 
     id = Sequence(lambda n: n)
-
-    # squad = SubFactory("tests.factories.squad.SquadFactory")
-    # user = SubFactory("tests.factories.user.UserFactory")
 
 
 class SquadFactory(SQLAlchemyModelFactory):

@@ -1,7 +1,6 @@
 from typing import List
 
 from factory.alchemy import SQLAlchemyModelFactory
-
 from tests.factories.booking import BookingFactory
 from tests.factories.field import FieldFactory
 from tests.factories.game import GameFactory

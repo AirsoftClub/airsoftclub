@@ -1,9 +1,8 @@
 from typing import Optional
 
-from pydantic import BaseModel, ConfigDict, Field
-
 from app.schemas.files import AvatarResponse
 from app.schemas.users import UserResponse
+from pydantic import BaseModel, ConfigDict, Field
 
 
 class SquadResponse(BaseModel):

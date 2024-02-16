@@ -1,8 +1,8 @@
-import mock
-from fastapi.testclient import TestClient
-from sqlalchemy.orm.session import Session
+from unittest import mock
 
 from app.models.user import User
+from fastapi.testclient import TestClient
+from sqlalchemy.orm.session import Session
 from tests.factories.google_token import GoogleTokenFactory
 from tests.factories.user import UserFactory
 

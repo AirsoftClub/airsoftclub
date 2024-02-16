@@ -1,4 +1,5 @@
-import mock
+from unittest import mock
+
 from app.models.user import User
 from fastapi.testclient import TestClient
 from tests.factories.field import FieldFactory

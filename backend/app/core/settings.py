@@ -1,13 +1,25 @@
-from pydantic_settings import BaseSettings, SettingsConfigDict
+from pydantic_settings import BaseSettings
 
 
 class Settings(BaseSettings):
-    app_secret: str = "replace-me"
+    app_secret: str
     app_url: str = "http://localhost:8000"
-    database_url: str = "sqlite:///:memory:"
-    google_client_id: str = ""
+    google_client_id: str
 
-    model_config = SettingsConfigDict(env_file=".env")
+    # Define your DB settings here as well
+    db_user: str
+    db_pass: str
+    db_host: str
+    db_port: str
+    db_name: str
+
+    @property
+    def database_url(self) -> str:
+        return f"postgresql+psycopg2://{self.db_user}:{self.db_pass}@{self.db_host}:{self.db_port}/{self.db_name}"
+
+    class Config:
+        env_file = ".env"
+        env_file_encoding = "utf-8"
 
 
 settings = Settings()

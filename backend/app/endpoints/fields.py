@@ -1,13 +1,12 @@
 from pathlib import Path
 
-from fastapi import APIRouter, Depends, HTTPException, UploadFile
-
 from app.models.file import File
 from app.models.user import User
 from app.repositories.fields import FieldRepository
 from app.schemas.fields import FieldResponse
 from app.schemas.files import FileResponse
 from app.security.auth import get_current_user
+from fastapi import APIRouter, Depends, HTTPException, UploadFile
 
 router = APIRouter()
 
