@@ -29,10 +29,6 @@ repos:
     hooks:
       - id: isort
         args: [ "--profile", "black", "--filter-files", "--ca"]
-  - repo: https://github.com/ambv/black
-    rev: 24.1.1
-    hooks:
-    - id: black
   - repo: https://github.com/ducminh-phan/reformat-gherkin
     rev: v3.0.1
     hooks:

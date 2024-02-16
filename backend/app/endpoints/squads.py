@@ -15,7 +15,8 @@ router = APIRouter()
 
 @router.get("/", response_model=List[SquadResponse])
 def get_squads(
-    _: User = Depends(get_current_user), squad_repository: SquadRepository = Depends()
+    _: User = Depends(get_current_user),
+    squad_repository: SquadRepository = Depends(),
 ):
     return squad_repository.get_squads()
 

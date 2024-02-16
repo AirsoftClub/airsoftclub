@@ -135,7 +135,10 @@ def upgrade() -> None:
         sa.PrimaryKeyConstraint("id"),
     )
     op.create_index(
-        op.f("ix_squads_invitations_id"), "squads_invitations", ["id"], unique=False
+        op.f("ix_squads_invitations_id"),
+        "squads_invitations",
+        ["id"],
+        unique=False,
     )
     op.create_table(
         "squads_members",

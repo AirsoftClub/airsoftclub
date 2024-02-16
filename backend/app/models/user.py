@@ -11,7 +11,7 @@ if TYPE_CHECKING:
     from app.models.field import Field
     from app.models.file import File
     from app.models.game import Game
-    from app.models.squad import Squad, SquadApply, SquadInvitation
+    from app.models.squad import Squad
 
 
 class User(Base):
@@ -40,16 +40,16 @@ class User(Base):
 
     owned_squads: Mapped[List["Squad"]] = relationship(back_populates="owner")
 
-    squads: AssociationProxy[list["Squad"]] = association_proxy(
-        "squads_members", "squad"
+    squads: Mapped[list["Squad"]] = relationship(
+        secondary="squad_members", back_populates="members"
     )
 
-    invitations: Mapped[list["SquadInvitation"]] = relationship(
-        "SquadInvitation", back_populates="user"
+    squad_invitations: Mapped[list["Squad"]] = relationship(
+        secondary="squad_invitations", back_populates="invitations"
     )
 
-    applies: Mapped[list["SquadApply"]] = relationship(
-        "SquadApply", back_populates="user"
+    squad_applications: Mapped[list["Squad"]] = relationship(
+        secondary="squad_applications", back_populates="applications"
     )
 
     def __repr__(self):

@@ -5,7 +5,6 @@
 ## Run project on linux
 
 ```
-    sudo chmod -x setup-dev.sh
     source setup-dev.sh
 ```
 

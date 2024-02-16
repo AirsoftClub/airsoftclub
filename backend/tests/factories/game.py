@@ -21,7 +21,9 @@ class GameFactory(SQLAlchemyModelFactory):
     field = SubFactory("tests.factories.field.FieldFactory")
 
     bookings = RelatedFactoryList(
-        "tests.factories.booking.BookingFactory", size=2, factory_related_name="game"
+        "tests.factories.booking.BookingFactory",
+        size=2,
+        factory_related_name="game",
     )
 
     teams = RelatedFactoryList(
