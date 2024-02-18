@@ -25,7 +25,7 @@ def get_squad(squad_id: int, squad_repository: SquadRepository = Depends()):
     """
     squad = squad_repository.get_squad(squad_id)
 
-    if not squad:
+    if squad is None:
         raise HTTPException(status_code=404, detail="Squad not found")
 
     return squad
