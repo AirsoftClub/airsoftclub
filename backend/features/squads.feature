@@ -361,6 +361,102 @@ Feature: Squad
       []
       """
 
+  Scenario: Invite - Accept a non invited user
+    Given I do a POST request to /squads with the following data
+      """
+      name: Power Rangers Squad
+      description: Po-po-power rangers!
+      """
+    When I do a PUT request to /squads/1/invites with the following data
+      """
+      accept: true
+      """
+    And I get a 400 response
+    And The response JSON is
+      """
+      detail: User is not invited
+      """
+
+  Scenario: Invite a user - Already invited
+    Given I do a POST request to /squads with the following data
+      """
+      name: Power Rangers Squad
+      description: Po-po-power rangers!
+      """
+    And I do a POST request to /squads/1/invites with the following data
+      """
+      email: tom_thomson@example.com
+      """
+    When I do a POST request to /squads/1/invites with the following data
+      """
+      email: tom_thomson@example.com
+      """
+    And I get a 400 response
+    And The response JSON is
+      """
+      detail: User already invited
+      """
+
+  Scenario: Invite a user - Already a member
+    Given I do a POST request to /squads with the following data
+      """
+      name: Power Rangers Squad
+      description: Po-po-power rangers!
+      """
+    And I do a POST request to /squads/1/invites with the following data
+      """
+      email: tom_thomson@example.com
+      """
+    And I'm logged with the user tom_thomson@example.com
+    And I do a PUT request to /squads/1/invites with the following data
+      """
+      accept: true
+      """
+    And I'm logged with the user john_doe@example.com
+    When I do a POST request to /squads/1/invites with the following data
+      """
+      email: tom_thomson@example.com
+      """
+    And I get a 400 response
+    And The response JSON is
+      """
+      detail: User is already a member
+      """
+
+  Scenario: Invite a user - already applied
+    Given I do a POST request to /squads with the following data
+      """
+      name: Power Rangers Squad
+      description: Po-po-power rangers!
+      """
+    And I'm logged with the user tom_thomson@example.com
+    When I do a PUT request to /squads/1/apply
+    And I'm logged with the user john_doe@example.com
+    Then I do a POST request to /squads/1/invites with the following data
+      """
+      email: tom_thomson@example.com
+      """
+    And I get a 200 response
+    And The response JSON is
+      """
+      message: User joined the squad
+      """
+    And I do a GET request to /squads/1/members
+    And I get a 200 response
+    And The response JSON is
+      """
+      - id: 1
+        name: John
+        lastname: Doe
+        email: john_doe@example.com
+        avatar: null
+      - id: 2
+        name: Tom
+        lastname: Thomson
+        email: tom_thomson@example.com
+        avatar: null
+      """
+
   Scenario: Invite a user - decline invite
     Given I do a POST request to /squads with the following data
       """
@@ -396,6 +492,22 @@ Feature: Squad
     And The response JSON is
       """
       []
+      """
+
+  Scenario: Invite a user - Non existent user
+    Given I do a POST request to /squads with the following data
+      """
+      name: Power Rangers Squad
+      description: Po-po-power rangers!
+      """
+    When I do a POST request to /squads/1/invites with the following data
+      """
+      email: ron_ronson@example.com
+      """
+    Then I get a 404 response
+    And The response JSON is
+      """
+      detail: User not found
       """
 
   Scenario: Apply to Squad
@@ -584,4 +696,20 @@ Feature: Squad
     And The response JSON is
       """
       detail: User not found
+      """
+
+  Scenario: Apply to Squad - Accept non applied user
+    Given I do a POST request to /squads with the following data
+      """
+      name: Power Rangers Squad
+      description: Po-po-power rangers!
+      """
+    When I do a PUT request to /squads/1/applies/2 with the following data
+      """
+      accept: true
+      """
+    Then I get a 400 response
+    And The response JSON is
+      """
+      detail: User didn't apply to this squad
       """
