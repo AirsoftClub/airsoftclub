@@ -1,6 +1,6 @@
 from datetime import datetime
 
-from pydantic import BaseModel
+from pydantic import BaseModel, EmailStr
 
 
 class RefreshTokenRequest(BaseModel):
@@ -16,7 +16,7 @@ class GoogleDecodedJWT(BaseModel):
     azp: str
     aud: str
     sub: str
-    email: str
+    email: EmailStr
     email_verified: bool
     nbf: datetime
     name: str

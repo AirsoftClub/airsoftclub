@@ -5,6 +5,8 @@ from typing import List
 from app.core.database import get_db
 from app.models.file import File
 from app.models.squad import Squad
+from app.models.user import User
+from app.schemas.squads import SquadUpdateRequest
 from fastapi import Depends, UploadFile
 from sqlalchemy.orm import Session
 
@@ -27,11 +29,24 @@ class SquadRepository:
     def get_count_by_name(self, name: str) -> int:
         return self.db.query(Squad).filter(Squad.name == name).count()
 
+    def get_count_by_owner(self, owner_id: str) -> int:
+        return (
+            self.db.query(Squad).filter(Squad.owner.has(id=owner_id)).count()
+        )  # TODO: Should we count deleted?
+
     def upsert_squad(self, squad: Squad) -> Squad:
         self.db.add(squad)
         self.db.commit()
         self.db.refresh(squad)
         return squad
+
+    def update_squad(self, squad: Squad, payload: SquadUpdateRequest):
+        if payload.name:
+            squad.name = payload.name
+        if payload.description:
+            squad.description = payload.description
+        self.db.add(squad)
+        self.db.commit()
 
     def add_squad_photos(self, squad: Squad, photos: List[UploadFile]) -> List[File]:
         directory = Path(f"static/squads/{squad.id}/photos")
@@ -62,6 +77,29 @@ class SquadRepository:
         squad.avatar = File(path=path.as_posix())
         squad = self.upsert_squad(squad)
         return squad.avatar
+
+    def invite_user(self, squad: Squad, user: User) -> None:
+        squad.invitations.append(user)
+        self.db.add(squad)
+        self.db.commit()
+
+    def accept_user(self, squad: Squad, user: User) -> None:
+        if user in squad.invitations:
+            # Remove invitations for this user
+            squad.invitations.remove(user)
+
+        if user in squad.applications:
+            # Remove applications for this user
+            squad.applications.remove(user)
+
+        squad.members.append(user)
+        self.db.add(squad)
+        self.db.commit()
+
+    def decline_invite(self, squad: Squad, user: User) -> None:
+        squad.invitations.remove(user)
+        self.db.add(squad)
+        self.db.commit()
 
     def delete_squad(self, squad: Squad) -> Squad:
         squad.deleted_at = datetime.utcnow()

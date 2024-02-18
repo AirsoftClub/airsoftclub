@@ -44,7 +44,7 @@ def login(
         raise HTTPException(status_code=404, detail="User not found")
 
     if not Hash.verify(user.password, db_user.password):
-        raise HTTPException(status_code=404, detail="User not found")
+        raise HTTPException(status_code=401, detail="Invalid credentials")
 
     return generate_token_family_from_user(db_user.id)
 

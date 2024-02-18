@@ -1,8 +1,8 @@
-from datetime import datetime
 from typing import TYPE_CHECKING, List
 
 from app.models.base import Base
-from sqlalchemy import Column, DateTime, ForeignKey, Integer, String, Table
+from app.models.mixins import TimeTracked
+from sqlalchemy import Column, ForeignKey, Integer, String, Table
 from sqlalchemy.orm import Mapped, relationship
 
 if TYPE_CHECKING:
@@ -39,15 +39,12 @@ SquadApplications = Table(
 )
 
 
-class Squad(Base):
+class Squad(Base, TimeTracked):
     __tablename__ = "squads"
 
     id = Column(Integer, primary_key=True, index=True)
     name = Column(String, nullable=False)
     description = Column(String, nullable=False)
-    updated_at = Column(DateTime, nullable=False, onupdate=datetime.utcnow)
-    created_at = Column(DateTime, nullable=False, default=datetime.utcnow)
-    deleted_at = Column(DateTime, nullable=True, default=None)
 
     avatar_id = Column(Integer, ForeignKey("files.id", ondelete="CASCADE"))
     avatar: Mapped["File"] = relationship("File")
