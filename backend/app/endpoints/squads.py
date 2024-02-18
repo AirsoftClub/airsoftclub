@@ -40,7 +40,7 @@ def get_owned_squad(
     Raises 403 if user is not owner
     """
     if squad.owner_id != current_user.id:
-        raise HTTPException(status_code=403, detail="You are not the owner")
+        raise HTTPException(status_code=403, detail="You are not the owner of this squad")
 
     return squad
 
