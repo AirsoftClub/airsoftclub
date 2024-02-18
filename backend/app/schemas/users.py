@@ -31,8 +31,8 @@ class UserRegisterRequest(BaseModel):
 class UserUpdateRequest(BaseModel):
     model_config = ConfigDict(from_attributes=True)
 
-    name: str
-    lastname: str
+    name: str | None = None
+    lastname: str | None = None
 
 
 class UserLoginRequest(BaseModel):

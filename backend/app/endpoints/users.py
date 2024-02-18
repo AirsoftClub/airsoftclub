@@ -28,14 +28,11 @@ def me(
 
 @router.post("/me", response_model=UserResponse)
 def update_me(
-    user: UserUpdateRequest,
+    payload: UserUpdateRequest,
     current_user: User = Depends(get_current_user),
     user_repository: UserRepository = Depends(),
 ):
-    current_user.name = user.name
-    current_user.lastname = user.lastname
-
-    return user_repository.update(current_user)
+    return user_repository.update(current_user, payload)
 
 
 @router.post("/me/avatar", response_model=UserResponse)
@@ -60,4 +57,5 @@ def me_avatar(
     user = user_repository.get_by_id(current_user.id)
     user.avatar = File(path=file_path.as_posix())
 
+    # TODO: Fix this
     return user_repository.update(user)
