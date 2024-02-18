@@ -77,7 +77,6 @@ def google_login(
         )
 
     user.avatar = File(path=user_data.picture)
-    user_repository.db.add(user)
-    user_repository.db.commit()
+    user_repository.create(user)
 
     return generate_token_family_from_user(user.id)
