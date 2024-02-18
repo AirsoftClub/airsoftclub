@@ -205,9 +205,14 @@ Feature: Users
     And I get a 200 response
     And The response JSON is
       """
-      - id: 2
-        name: Tom
-        lastname: Thomson
-        email: tom_thomson@example.com
+      - id: 1
+        name: Power Rangers Squad
+        description: Po-po-power rangers!
         avatar: null
+        owner:
+            id: 1
+            name: John
+            lastname: Doe
+            email: john_doe@example.com
+            avatar: null
       """
