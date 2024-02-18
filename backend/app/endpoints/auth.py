@@ -41,7 +41,7 @@ def login(
     db_user = user_repository.get_by_email(user.email)
 
     if db_user is None:
-        raise HTTPException(status_code=404, detail="User not found")
+        raise HTTPException(status_code=401, detail="Invalid credentials")
 
     if not Hash.verify(user.password, db_user.password):
         raise HTTPException(status_code=401, detail="Invalid credentials")
