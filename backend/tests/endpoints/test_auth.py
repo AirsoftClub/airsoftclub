@@ -20,7 +20,8 @@ def test_user_register(client: TestClient, db_session: Session):
 
     assert response.status_code == 200
 
-    user = db_session.query(User).filter(User.email == "email@test.com").first()
+    user = db_session.query(User).filter(
+        User.email == "email@test.com").first()
 
     assert user is not None
 
@@ -54,7 +55,7 @@ def test_user_can_login(client: TestClient):
 
 def test_user_cant_login_with_wrong_email(client: TestClient):
     response = client.post(
-        "/auth/login", json={"email": "wrong_email", "password": "password"}
+        "/auth/login", json={"email": "foo@faa.com", "password": "password"}
     )
 
     assert response.status_code == 404
@@ -68,8 +69,8 @@ def test_user_cant_login_with_wrong_password(client: TestClient):
         "/auth/login", json={"email": user.email, "password": "wrong_password"}
     )
 
-    assert response.status_code == 404
-    assert response.json() == {"detail": "User not found"}
+    assert response.status_code == 401
+    assert response.json() == {"detail": "Invalid credentials"}
 
 
 @mock.patch(
@@ -87,7 +88,8 @@ def test_google_login(client: TestClient):
 
 @mock.patch(
     "app.endpoints.auth.get_google_user_data",
-    mock.MagicMock(return_value=GoogleTokenFactory.create(email_verified=False)),
+    mock.MagicMock(return_value=GoogleTokenFactory.create(
+        email_verified=False)),
 )
 def test_google_login_email_not_verified(client: TestClient):
     response = client.post(
@@ -121,6 +123,7 @@ def test_refresh_token(client: TestClient, db_session: Session):
 
     print(refresh_token)
 
-    response = client.post("/auth/refresh", json={"refresh_token": refresh_token})
+    response = client.post(
+        "/auth/refresh", json={"refresh_token": refresh_token})
 
     assert response.status_code == 200

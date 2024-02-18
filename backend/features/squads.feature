@@ -379,3 +379,191 @@ Feature: Squad
         """
         []
         """
+
+    Scenario: Apply to Squad
+        Given I do a POST request to /squads with the following data
+        """
+        name: Power Rangers Squad
+        description: Po-po-power rangers!
+        """
+        And I'm logged with the user tom_thomson@example.com
+        When I do a PUT request to /squads/1/apply
+        Then I get a 200 response
+        And The response JSON is
+        """
+        message: Application created
+        """
+        And I do a GET request to /squads/1/applies
+        And I get a 200 response
+        And The response JSON is
+        """
+        - id: 2
+          name: Tom
+          lastname: Thomson
+          email: tom_thomson@example.com
+          avatar: null
+        """
+
+    Scenario: Apply to Squad - as member
+        Given I do a POST request to /squads with the following data
+        """
+        name: Power Rangers Squad
+        description: Po-po-power rangers!
+        """
+        When I do a PUT request to /squads/1/apply
+        Then I get a 400 response
+        And The response JSON is
+        """
+        detail: User is already in squad
+        """
+        And I do a GET request to /squads/1/applies
+        And I get a 200 response
+        And The response JSON is
+        """
+        []
+        """
+
+    Scenario: Apply to Squad - Already invited
+        Given I do a POST request to /squads with the following data
+        """
+        name: Power Rangers Squad
+        description: Po-po-power rangers!
+        """
+        And I do a POST request to /squads/1/invites with the following data
+        """
+        email: tom_thomson@example.com
+        """
+        And I'm logged with the user tom_thomson@example.com
+        When I do a PUT request to /squads/1/apply
+        Then I get a 200 response
+        And The response JSON is
+        """
+        message: User joined the squad
+        """
+        And I do a GET request to /squads/1/members
+        And I get a 200 response
+        And The response JSON is
+        """
+        - id: 1
+          name: John
+          lastname: Doe
+          email: john_doe@example.com
+          avatar: null
+        - id: 2
+          name: Tom
+          lastname: Thomson
+          email: tom_thomson@example.com
+          avatar: null
+        """
+
+    Scenario: Apply to Squad - accepted
+        Given I do a POST request to /squads with the following data
+        """
+        name: Power Rangers Squad
+        description: Po-po-power rangers!
+        """
+        And I'm logged with the user tom_thomson@example.com
+        And I do a PUT request to /squads/1/apply
+        And I get a 200 response
+        And The response JSON is
+        """
+        message: Application created
+        """
+        And I'm logged with the user john_doe@example.com
+        When I do a PUT request to /squads/1/applies/2 with the following data
+        """
+        accept: true
+        """
+        Then I get a 200 response
+        And The response JSON is
+        """
+        message: Application updated
+        """
+        And I do a GET request to /squads/1/members
+        And I get a 200 response
+        And The response JSON is
+        """
+        - id: 1
+          name: John
+          lastname: Doe
+          email: john_doe@example.com
+          avatar: null
+        - id: 2
+          name: Tom
+          lastname: Thomson
+          email: tom_thomson@example.com
+          avatar: null
+        """
+
+    Scenario: Apply to Squad - decline
+        Given I do a POST request to /squads with the following data
+        """
+        name: Power Rangers Squad
+        description: Po-po-power rangers!
+        """
+        And I'm logged with the user tom_thomson@example.com
+        And I do a PUT request to /squads/1/apply
+        And I get a 200 response
+        And The response JSON is
+        """
+        message: Application created
+        """
+        And I'm logged with the user john_doe@example.com
+        When I do a PUT request to /squads/1/applies/2 with the following data
+        """
+        accept: false
+        """
+        Then I get a 200 response
+        And The response JSON is
+        """
+        message: Application updated
+        """
+        And I do a GET request to /squads/1/members
+        And I get a 200 response
+        And The response JSON is
+        """
+        - id: 1
+          name: John
+          lastname: Doe
+          email: john_doe@example.com
+          avatar: null
+        """
+
+    Scenario: Apply to Squad - accept not as owner
+        Given I do a POST request to /squads with the following data
+        """
+        name: Power Rangers Squad
+        description: Po-po-power rangers!
+        """
+        And I'm logged with the user tom_thomson@example.com
+        And I do a PUT request to /squads/1/apply
+        And I get a 200 response
+        And The response JSON is
+        """
+        message: Application created
+        """
+        When I do a PUT request to /squads/1/applies/2 with the following data
+        """
+        accept: true
+        """
+        Then I get a 403 response
+        And The response JSON is
+        """
+        detail: You are not the owner
+        """
+
+    Scenario: Apply to Squad - accept missing user
+        Given I do a POST request to /squads with the following data
+        """
+        name: Power Rangers Squad
+        description: Po-po-power rangers!
+        """
+        When I do a PUT request to /squads/1/applies/999 with the following data
+        """
+        accept: true
+        """
+        Then I get a 404 response
+        And The response JSON is
+        """
+        detail: User not found
+        """

@@ -6,15 +6,15 @@ from app.permissions.squads import SquadPermissions
 from app.repositories import SquadRepository, UserRepository
 from app.schemas.files import FileResponse
 from app.schemas.squads import (
-    SquadInvitationReply,
     SquadInvitationRequest,
+    SquadReplyRequest,
     SquadResponse,
     SquadUpdateRequest,
     SquadUpsertRequest,
 )
 from app.schemas.users import UserResponse
 from app.security.auth import get_current_user
-from fastapi import APIRouter, Depends, HTTPException, Response, UploadFile
+from fastapi import APIRouter, Depends, HTTPException, UploadFile
 
 router = APIRouter(dependencies=[Depends(get_current_user)])
 
@@ -146,9 +146,9 @@ def invite_user(
         raise HTTPException(status_code=400, detail="User already invited")
 
     if user in squad.applications:
-        # if user applied and invited, should be automatically accepted
+        # User already applied, should be automatically accepted
         squad_repository.accept_user(squad, user)
-        return Response(status_code=200, content={"message": "User joined the squad"})
+        return {"message": "User joined the squad"}
 
     squad_repository.invite_user(squad, user)
 
@@ -157,7 +157,7 @@ def invite_user(
 
 @router.put("/{squad_id}/invites")
 def update_invite(
-    payload: SquadInvitationReply,
+    payload: SquadReplyRequest,
     squad: Squad = Depends(get_squad),
     current_user: User = Depends(get_current_user),
     squad_repository: SquadRepository = Depends(),
@@ -168,9 +168,52 @@ def update_invite(
     if payload.accept:
         squad_repository.accept_user(squad, current_user)
     else:
-        squad_repository.decline_invite(squad, current_user)
+        squad_repository.decline_user(squad, current_user)
 
     return {"message": "Invitation updated"}
+
+
+@router.put("/{squad_id}/applies/{user_id}")
+def update_application(
+    user_id: int,
+    payload: SquadReplyRequest,
+    squad: Squad = Depends(get_owned_squad),
+    squad_repository: SquadRepository = Depends(),
+    user_repository: UserRepository = Depends(),
+):
+    user = user_repository.get_by_id(user_id)
+    if not user:
+        raise HTTPException(status_code=404, detail="User not found")
+
+    if user not in squad.applications:
+        raise HTTPException(
+            status_code=400, detail="User didn't apply to this squad")
+
+    if payload.accept:
+        squad_repository.accept_user(squad, user)
+    else:
+        squad_repository.decline_user(squad, user)
+
+    return {"message": "Application updated"}
+
+
+@router.put("/{squad_id}/apply")
+def apply_to_squad(
+    squad: Squad = Depends(get_squad),
+    current_user: User = Depends(get_current_user),
+    squad_repository: SquadRepository = Depends(),
+):
+    if current_user in squad.members:
+        raise HTTPException(status_code=400, detail="User is already in squad")
+
+    if current_user in squad.invitations:
+        # User is already invited, should be automatically accepted
+        squad_repository.accept_user(squad, current_user)
+        return {"message": "User joined the squad"}
+
+    squad_repository.apply_to_squad(squad, current_user)
+
+    return {"message": "Application created"}
 
 
 @router.get("/{squad_id}/invites", response_model=List[UserResponse])
@@ -178,7 +221,13 @@ def get_invited_users(
     squad: Squad = Depends(get_squad),
 ):
     return squad.invitations
-    return Response(status_code=204, content={"message": "User invited"})
+
+
+@router.get("/{squad_id}/applies", response_model=List[UserResponse])
+def get_squad_applications(
+    squad: Squad = Depends(get_squad),
+):
+    return squad.applications
 
 
 @router.delete("/{squad_id}")

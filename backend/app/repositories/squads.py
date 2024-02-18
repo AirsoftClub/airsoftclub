@@ -83,6 +83,11 @@ class SquadRepository:
         self.db.add(squad)
         self.db.commit()
 
+    def apply_to_squad(self, squad: Squad, user: User) -> None:
+        squad.applications.append(user)
+        self.db.add(squad)
+        self.db.commit()
+
     def accept_user(self, squad: Squad, user: User) -> None:
         if user in squad.invitations:
             # Remove invitations for this user
@@ -96,8 +101,14 @@ class SquadRepository:
         self.db.add(squad)
         self.db.commit()
 
-    def decline_invite(self, squad: Squad, user: User) -> None:
-        squad.invitations.remove(user)
+    def decline_user(self, squad: Squad, user: User) -> None:
+        if user in squad.invitations:
+            # Remove invitations for this user
+            squad.invitations.remove(user)
+
+        if user in squad.applications:
+            # Remove applications for this user
+            squad.applications.remove(user)
         self.db.add(squad)
         self.db.commit()
 

@@ -29,5 +29,5 @@ class SquadInvitationRequest(BaseModel):
     email: EmailStr
 
 
-class SquadInvitationReply(BaseModel):
+class SquadReplyRequest(BaseModel):
     accept: bool

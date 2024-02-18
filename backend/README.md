@@ -54,12 +54,12 @@ Follow these steps to get your development environment set up:
 
 To ensure the quality of the code, follow these steps to run the tests:
 
-- **Run tests serially**:
+- **Run unit tests serially**:
     ```shell
     pytest
     ```
 
-- **Run tests in parallel**:
+- **Run unit tests in parallel**:
     For faster execution, you can run tests in parallel:
     ```shell
     pytest -n 4
@@ -67,6 +67,11 @@ To ensure the quality of the code, follow these steps to run the tests:
     Or, to automatically use as many workers as the number of CPUs:
     ```shell
     pytest -n auto
+    ```
+
+- **Run system tests**:
+    ```shell
+    behave
     ```
 
 ## 📦 Docker Support
