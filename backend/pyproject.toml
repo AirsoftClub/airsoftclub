@@ -37,6 +37,7 @@ build-backend = "poetry.core.masonry.api"
 
 
 [tool.coverage.run]
+source = ["app"]
 omit = [
     ".venv/*",
 ]
