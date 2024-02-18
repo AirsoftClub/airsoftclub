@@ -4,7 +4,7 @@ WORKDIR /app
 
 COPY ./ ./
 
-RUN pip3 install "poetry==1.6.1"
+RUN pip3 install "poetry==1.7.1"
 
 RUN poetry install
 
