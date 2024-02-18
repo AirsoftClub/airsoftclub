@@ -52,6 +52,10 @@ Follow these steps to get your development environment set up:
 
 ## 🧪 Testing
 
+There are 2 types of tests available:
+- Unit tests;
+- System tests.
+
 To ensure the quality of the code, follow these steps to run the tests:
 
 - **Run unit tests serially**:
