@@ -79,7 +79,6 @@ def get_squad_photos(
 def add_squad_photos(
     photos: List[UploadFile],
     squad: Squad = Depends(get_owned_squad),
-    current_user: User = Depends(get_current_user),
     squad_repository: SquadRepository = Depends(),
 ):
     return squad_repository.add_squad_photos(squad, photos)
@@ -88,7 +87,6 @@ def add_squad_photos(
 @router.post("/{squad_id}/avatar")
 def add_squad_avatar(
     avatar: UploadFile,
-    current_user: User = Depends(get_current_user),
     squad_repository: SquadRepository = Depends(),
     squad: Squad = Depends(get_owned_squad),
 ):
@@ -123,7 +121,6 @@ def create_squad(
 @router.put("/{squad_id}")
 def update_squad(
     payload: SquadUpdateRequest,
-    current_user: User = Depends(get_current_user),
     squad_repository: SquadRepository = Depends(),
     squad: Squad = Depends(get_owned_squad),
 ):
@@ -134,7 +131,6 @@ def update_squad(
 def invite_user(
     payload: SquadInvitationRequest,
     squad: Squad = Depends(get_owned_squad),
-    current_user: User = Depends(get_current_user),
     squad_repository: SquadRepository = Depends(),
     user_repository: UserRepository = Depends(),
 ):
@@ -188,7 +184,6 @@ def get_invited_users(
 @router.delete("/{squad_id}")
 def delete_squad(
     squad: Squad = Depends(get_owned_squad),
-    current_user: User = Depends(get_current_user),
     squad_repository: SquadRepository = Depends(),
 ):
     return squad_repository.delete_squad(squad)
