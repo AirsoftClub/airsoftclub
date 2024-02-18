@@ -1,5 +1,3 @@
-from typing import List
-
 from app.models.squad import Squad
 from app.models.user import User
 from app.permissions.squads import SquadPermissions
@@ -47,7 +45,7 @@ def get_owned_squad(
     return squad
 
 
-@router.get("/", response_model=List[SquadResponse])
+@router.get("/", response_model=list[SquadResponse])
 def get_squads(
     squad_repository: SquadRepository = Depends(),
 ):
@@ -61,23 +59,23 @@ def get_squad(
     return squad
 
 
-@router.get("/{squad_id}/members", response_model=List[UserResponse])
+@router.get("/{squad_id}/members", response_model=list[UserResponse])
 def get_squad_members(
     squad: Squad = Depends(get_squad),
 ):
     return squad.members
 
 
-@router.get("/{squad_id}/photos", response_model=List[FileResponse])
+@router.get("/{squad_id}/photos", response_model=list[FileResponse])
 def get_squad_photos(
     squad: Squad = Depends(get_squad),
 ):
     return squad.photos
 
 
-@router.post("/{squad_id}/photos", response_model=List[FileResponse])
+@router.post("/{squad_id}/photos", response_model=list[FileResponse])
 def add_squad_photos(
-    photos: List[UploadFile],
+    photos: list[UploadFile],
     squad: Squad = Depends(get_owned_squad),
     squad_repository: SquadRepository = Depends(),
 ):
@@ -215,14 +213,14 @@ def apply_to_squad(
     return {"message": "Application created"}
 
 
-@router.get("/{squad_id}/invites", response_model=List[UserResponse])
+@router.get("/{squad_id}/invites", response_model=list[UserResponse])
 def get_invited_users(
     squad: Squad = Depends(get_squad),
 ):
     return squad.invitations
 
 
-@router.get("/{squad_id}/applies", response_model=List[UserResponse])
+@router.get("/{squad_id}/applies", response_model=list[UserResponse])
 def get_squad_applications(
     squad: Squad = Depends(get_squad),
 ):

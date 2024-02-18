@@ -1,4 +1,4 @@
-from typing import TYPE_CHECKING, List
+from typing import TYPE_CHECKING
 
 from app.models.base import Base
 from app.models.mixins import TimeTracked
@@ -49,20 +49,20 @@ class Squad(Base, TimeTracked):
     avatar_id = Column(Integer, ForeignKey("files.id", ondelete="CASCADE"))
     avatar: Mapped["File"] = relationship("File")
 
-    photos: Mapped[List["File"]] = relationship(secondary=squads_photos)
+    photos: Mapped[list["File"]] = relationship(secondary=squads_photos)
 
     owner_id = Column(Integer, ForeignKey("users.id", ondelete="CASCADE"))
     owner: Mapped["User"] = relationship(back_populates="owned_squads")
 
-    members: Mapped[List["User"]] = relationship(
+    members: Mapped[list["User"]] = relationship(
         secondary=SquadMember, back_populates="squads"
     )
 
-    invitations: Mapped[List["User"]] = relationship(
+    invitations: Mapped[list["User"]] = relationship(
         secondary=SquadInvitations, back_populates="squad_invitations"
     )
 
-    applications: Mapped[List["User"]] = relationship(
+    applications: Mapped[list["User"]] = relationship(
         secondary=SquadApplications, back_populates="squad_applications"
     )
 

@@ -1,4 +1,4 @@
-from typing import TYPE_CHECKING, List
+from typing import TYPE_CHECKING
 
 from app.models.base import Base
 from app.models.mixins import TimeTracked
@@ -36,7 +36,7 @@ class User(Base, TimeTracked):
 
     games: AssociationProxy[list["Game"]] = association_proxy("bookings", "game")
 
-    owned_squads: Mapped[List["Squad"]] = relationship(back_populates="owner")
+    owned_squads: Mapped[list["Squad"]] = relationship(back_populates="owner")
 
     squads: Mapped[list["Squad"]] = relationship(
         secondary="squad_members", back_populates="members"

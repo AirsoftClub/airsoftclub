@@ -1,6 +1,5 @@
 from datetime import datetime
 from pathlib import Path
-from typing import List
 
 from app.core.database import get_db
 from app.models.file import File
@@ -15,7 +14,7 @@ class SquadRepository:
     def __init__(self, db: Session = Depends(get_db)) -> None:
         self.db = db
 
-    def get_squads(self) -> List[Squad]:
+    def get_squads(self) -> list[Squad]:
         return self.db.query(Squad).filter(Squad.deleted_at.is_(None)).all()
 
     def get_squad(self, id: int) -> Squad:
@@ -48,7 +47,7 @@ class SquadRepository:
         self.db.add(squad)
         self.db.commit()
 
-    def add_squad_photos(self, squad: Squad, photos: List[UploadFile]) -> List[File]:
+    def add_squad_photos(self, squad: Squad, photos: list[UploadFile]) -> list[File]:
         directory = Path(f"static/squads/{squad.id}/photos")
 
         if not directory.exists():
