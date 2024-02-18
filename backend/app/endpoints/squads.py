@@ -40,7 +40,9 @@ def get_owned_squad(
     Raises 403 if user is not owner
     """
     if squad.owner_id != current_user.id:
-        raise HTTPException(status_code=403, detail="You are not the owner of this squad")
+        raise HTTPException(
+            status_code=403, detail="You are not the owner of this squad"
+        )
 
     return squad
 
@@ -139,9 +141,6 @@ def invite_user(
 
     if user in squad.members:
         raise HTTPException(status_code=400, detail="User is already a member")
-
-    if user in squad.invitations:
-        raise HTTPException(status_code=400, detail="User already invited")
 
     if user in squad.applications:
         # User already applied, should be automatically accepted

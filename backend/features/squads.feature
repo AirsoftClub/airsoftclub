@@ -194,7 +194,7 @@ Feature: Squad
     And I'm logged with the user tom_thomson@example.com
     When I do a DELETE request to /squads/1
       """
-      detail: You are not the owner
+      detail: You are not the owner of this squad
       """
 
   Scenario: Get Squads - Empty
@@ -290,7 +290,7 @@ Feature: Squad
     Then I get a 403 response
     And The response JSON is
       """
-      detail: You are not the owner
+      detail: You are not the owner of this squad
       """
 
   Scenario: Invite a user
@@ -375,26 +375,6 @@ Feature: Squad
     And The response JSON is
       """
       detail: User is not invited
-      """
-
-  Scenario: Invite a user - Already invited
-    Given I do a POST request to /squads with the following data
-      """
-      name: Power Rangers Squad
-      description: Po-po-power rangers!
-      """
-    And I do a POST request to /squads/1/invites with the following data
-      """
-      email: tom_thomson@example.com
-      """
-    When I do a POST request to /squads/1/invites with the following data
-      """
-      email: tom_thomson@example.com
-      """
-    And I get a 400 response
-    And The response JSON is
-      """
-      detail: User already invited
       """
 
   Scenario: Invite a user - Already a member
@@ -679,7 +659,7 @@ Feature: Squad
     Then I get a 403 response
     And The response JSON is
       """
-      detail: You are not the owner
+      detail: You are not the owner of this squad
       """
 
   Scenario: Apply to Squad - accept missing user

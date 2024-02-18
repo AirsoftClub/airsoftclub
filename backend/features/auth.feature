@@ -80,8 +80,8 @@ Feature: Registering and login
       email: john_doe@example.com
       password: blablabla
       """
-    Then I get a 401 response
+    Then I get a 404 response
     And The response JSON is
       """
-      detail: Invalid credentials
+      detail: User not found
       """
