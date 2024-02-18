@@ -186,8 +186,7 @@ def update_application(
         raise HTTPException(status_code=404, detail="User not found")
 
     if user not in squad.applications:
-        raise HTTPException(
-            status_code=400, detail="User didn't apply to this squad")
+        raise HTTPException(status_code=400, detail="User didn't apply to this squad")
 
     if payload.accept:
         squad_repository.accept_user(squad, user)
