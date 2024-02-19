@@ -2,6 +2,7 @@ from app.models.squad import Squad
 from app.models.user import User
 from app.permissions.squads import SquadPermissions
 from app.repositories import SquadRepository, UserRepository
+from app.schemas.common import MessageResponse
 from app.schemas.files import FileResponse
 from app.schemas.squads import (
     SquadInvitationRequest,
@@ -127,7 +128,7 @@ def update_squad(
     return squad_repository.update_squad(squad, payload)
 
 
-@router.post("/{squad_id}/invites")
+@router.post("/{squad_id}/invites", response_model=MessageResponse)
 def invite_user(
     payload: SquadInvitationRequest,
     squad: Squad = Depends(get_owned_squad),
@@ -156,7 +157,7 @@ def invite_user(
     return {"message": "User invited"}
 
 
-@router.put("/{squad_id}/invites")
+@router.put("/{squad_id}/invites", response_model=MessageResponse)
 def update_invite(
     payload: SquadReplyRequest,
     squad: Squad = Depends(get_squad),
@@ -174,7 +175,7 @@ def update_invite(
     return {"message": "Invitation updated"}
 
 
-@router.put("/{squad_id}/applies/{user_id}")
+@router.put("/{squad_id}/applies/{user_id}", response_model=MessageResponse)
 def update_application(
     user_id: int,
     payload: SquadReplyRequest,
@@ -197,7 +198,7 @@ def update_application(
     return {"message": "Application updated"}
 
 
-@router.put("/{squad_id}/apply")
+@router.put("/{squad_id}/apply", response_model=MessageResponse)
 def apply_to_squad(
     squad: Squad = Depends(get_squad),
     current_user: User = Depends(get_current_user),
