@@ -319,6 +319,41 @@ Feature: Squad
         avatar: null
       """
 
+  Scenario: Invite a user - Already invited
+    Given I do a POST request to /squads with the following data
+      """
+      name: Power Rangers Squad
+      description: Po-po-power rangers!
+      """
+    When I do a POST request to /squads/1/invites with the following data
+      """
+      email: tom_thomson@example.com
+      """
+    Then I get a 200 response
+    And The response JSON is
+      """
+      message: User invited
+      """
+    Then I do a POST request to /squads/1/invites with the following data
+      """
+      email: tom_thomson@example.com
+      """
+    Then I get a 200 response
+    And The response JSON is
+      """
+      message: User invited
+      """
+    And I do a GET request to /squads/1/invites
+    And I get a 200 response
+    And The response JSON is
+      """
+      - id: 2
+        name: Tom
+        lastname: Thomson
+        email: tom_thomson@example.com
+        avatar: null
+      """
+
   Scenario: Invite a user - accept invite
     Given I do a POST request to /squads with the following data
       """

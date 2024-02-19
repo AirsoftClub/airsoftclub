@@ -147,6 +147,10 @@ def invite_user(
         squad_repository.accept_user(squad, user)
         return {"message": "User joined the squad"}
 
+    if user in squad.invitations:
+        squad_repository.touch(squad)
+        return {"message": "User invited"}
+
     squad_repository.invite_user(squad, user)
 
     return {"message": "User invited"}

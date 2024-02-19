@@ -119,3 +119,7 @@ class SquadRepository:
     def delete_squad(self, squad: Squad) -> Squad:
         squad.deleted_at = datetime.utcnow()
         return self.upsert_squad(squad)
+
+    def touch(self, squad: Squad) -> None:
+        self.db.add(squad)
+        self.db.commit()
