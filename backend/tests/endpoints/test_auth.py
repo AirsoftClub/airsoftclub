@@ -54,7 +54,7 @@ def test_user_can_login(client: TestClient):
 
 def test_user_cant_login_with_wrong_email(client: TestClient):
     response = client.post(
-        "/auth/login", json={"email": "wrong_email", "password": "password"}
+        "/auth/login", json={"email": "foo@faa.com", "password": "password"}
     )
 
     assert response.status_code == 404
@@ -68,8 +68,8 @@ def test_user_cant_login_with_wrong_password(client: TestClient):
         "/auth/login", json={"email": user.email, "password": "wrong_password"}
     )
 
-    assert response.status_code == 404
-    assert response.json() == {"detail": "User not found"}
+    assert response.status_code == 401
+    assert response.json() == {"detail": "Invalid credentials"}
 
 
 @mock.patch(

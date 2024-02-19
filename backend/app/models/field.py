@@ -1,7 +1,7 @@
-from datetime import datetime
 from typing import TYPE_CHECKING
 
 from app.models.base import Base
+from app.models.mixins import TimeTracked
 from sqlalchemy import Column, Double, ForeignKey, Integer, String, Table
 from sqlalchemy.orm import Mapped, relationship
 
@@ -18,7 +18,7 @@ fields_photos = Table(
 )
 
 
-class Field(Base):
+class Field(Base, TimeTracked):
     __tablename__ = "fields"
 
     id = Column(Integer, primary_key=True, index=True)
@@ -26,10 +26,6 @@ class Field(Base):
     description = Column(String, nullable=True)
     cords_x = Column(Double, nullable=True)
     cords_y = Column(Double, nullable=True)
-    created_at = Column(String, nullable=True, default=datetime.utcnow)
-    updated_at = Column(
-        String, nullable=True, default=datetime.utcnow, onupdate=datetime.utcnow
-    )
 
     owner_id = Column(Integer, ForeignKey("users.id"))
     owner: Mapped["User"] = relationship(back_populates="fields")

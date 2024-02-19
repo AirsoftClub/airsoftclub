@@ -1,7 +1,7 @@
 from typing import Optional
 
 from app.schemas.files import AvatarResponse
-from pydantic import BaseModel, ConfigDict
+from pydantic import BaseModel, ConfigDict, EmailStr
 
 
 class UserResponse(BaseModel):
@@ -10,7 +10,7 @@ class UserResponse(BaseModel):
     id: int
     name: str
     lastname: str
-    email: str
+    email: EmailStr
     avatar: Optional[AvatarResponse] = None
 
 
@@ -23,7 +23,7 @@ class UserRegisterRequest(BaseModel):
     model_config = ConfigDict(from_attributes=True)
 
     name: str
-    email: str
+    email: EmailStr
     lastname: str
     password: str
 
@@ -31,14 +31,14 @@ class UserRegisterRequest(BaseModel):
 class UserUpdateRequest(BaseModel):
     model_config = ConfigDict(from_attributes=True)
 
-    name: str
-    lastname: str
+    name: str | None = None
+    lastname: str | None = None
 
 
 class UserLoginRequest(BaseModel):
     model_config = ConfigDict(from_attributes=True)
 
-    email: str
+    email: EmailStr
     password: str
 
 

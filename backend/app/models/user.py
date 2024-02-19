@@ -1,8 +1,8 @@
-from datetime import datetime
-from typing import TYPE_CHECKING, List
+from typing import TYPE_CHECKING
 
 from app.models.base import Base
-from sqlalchemy import Column, DateTime, ForeignKey, Integer, String
+from app.models.mixins import TimeTracked
+from sqlalchemy import Column, ForeignKey, Integer, String
 from sqlalchemy.ext.associationproxy import AssociationProxy, association_proxy
 from sqlalchemy.orm import Mapped, relationship
 
@@ -11,10 +11,10 @@ if TYPE_CHECKING:
     from app.models.field import Field
     from app.models.file import File
     from app.models.game import Game
-    from app.models.squad import Squad, SquadApply, SquadInvitation
+    from app.models.squad import Squad
 
 
-class User(Base):
+class User(Base, TimeTracked):
     __tablename__ = "users"
 
     id = Column(Integer, primary_key=True)
@@ -22,8 +22,6 @@ class User(Base):
     lastname = Column(String)
     email = Column(String, unique=True)
     password = Column(String)
-    created_at = Column(DateTime, default=datetime.utcnow)
-    updated_at = Column(DateTime, default=datetime.utcnow, onupdate=datetime.utcnow)
 
     avatar_id = Column(
         Integer,
@@ -38,18 +36,18 @@ class User(Base):
 
     games: AssociationProxy[list["Game"]] = association_proxy("bookings", "game")
 
-    owned_squads: Mapped[List["Squad"]] = relationship(back_populates="owner")
+    owned_squads: Mapped[list["Squad"]] = relationship(back_populates="owner")
 
-    squads: AssociationProxy[list["Squad"]] = association_proxy(
-        "squads_members", "squad"
+    squads: Mapped[list["Squad"]] = relationship(
+        secondary="squad_members", back_populates="members"
     )
 
-    invitations: Mapped[list["SquadInvitation"]] = relationship(
-        "SquadInvitation", back_populates="user"
+    squad_invitations: Mapped[list["Squad"]] = relationship(
+        secondary="squad_invitations", back_populates="invitations"
     )
 
-    applies: Mapped[list["SquadApply"]] = relationship(
-        "SquadApply", back_populates="user"
+    squad_applications: Mapped[list["Squad"]] = relationship(
+        secondary="squad_applications", back_populates="applications"
     )
 
     def __repr__(self):

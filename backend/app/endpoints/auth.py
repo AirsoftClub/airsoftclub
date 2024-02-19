@@ -56,7 +56,8 @@ def refresh(request: RefreshTokenRequest):
 
 @router.post("/google/login", response_model=TokenFamilyResponse)
 def google_login(
-    google_token: GoogleTokenRequest, user_repository: UserRepository = Depends()
+    google_token: GoogleTokenRequest,
+    user_repository: UserRepository = Depends(),
 ):
     user_data = get_google_user_data(google_token.token)
 
@@ -76,6 +77,6 @@ def google_login(
         )
 
     user.avatar = File(path=user_data.picture)
-    user_repository.update(user)
+    user_repository.create(user)
 
     return generate_token_family_from_user(user.id)

@@ -1,9 +1,8 @@
-from datetime import datetime
-from typing import TYPE_CHECKING, List
+from typing import TYPE_CHECKING
 
 from app.models.base import Base
-from sqlalchemy import Column, DateTime, ForeignKey, Integer, String, Table
-from sqlalchemy.ext.associationproxy import AssociationProxy, association_proxy
+from app.models.mixins import TimeTracked
+from sqlalchemy import Column, ForeignKey, Integer, String, Table
 from sqlalchemy.orm import Mapped, relationship
 
 if TYPE_CHECKING:
@@ -18,77 +17,54 @@ squads_photos = Table(
     Column("file_id", Integer, ForeignKey("files.id")),
 )
 
+SquadMember = Table(
+    "squad_members",
+    Base.metadata,
+    Column("squad_id", ForeignKey("squads.id")),
+    Column("user_id", ForeignKey("users.id")),
+)
 
-class SquadMember(Base):
-    __tablename__ = "squads_members"
+SquadInvitations = Table(
+    "squad_invitations",
+    Base.metadata,
+    Column("squad_id", ForeignKey("squads.id")),
+    Column("user_id", ForeignKey("users.id")),
+)
 
-    id = Column(Integer, primary_key=True, index=True)
-
-    squad_id = Column(Integer, ForeignKey("squads.id", ondelete="CASCADE"))
-    squad: Mapped["Squad"] = relationship(backref="squads_members")
-
-    member_id = Column(Integer, ForeignKey("users.id", ondelete="CASCADE"))
-    member: Mapped["User"] = relationship(backref="squads_members")
-
-    def __repr__(self):
-        return f"<SquadMember {self.id}>"
-
-
-class SquadInvitation(Base):
-    __tablename__ = "squads_invitations"
-
-    id = Column(Integer, primary_key=True, index=True)
-
-    user_id = Column(Integer, ForeignKey("users.id", ondelete="CASCADE"))
-    user: Mapped["User"] = relationship("User", back_populates="invitations")
-
-    squad_id = Column(Integer, ForeignKey("squads.id", ondelete="CASCADE"))
-    squad: Mapped["Squad"] = relationship("Squad", back_populates="invitations")
-
-    def __repr__(self):
-        return f"<SquadInvitation {self.id}>"
+SquadApplications = Table(
+    "squad_applications",
+    Base.metadata,
+    Column("squad_id", ForeignKey("squads.id")),
+    Column("user_id", ForeignKey("users.id")),
+)
 
 
-class SquadApply(Base):
-    __tablename__ = "squads_applies"
-
-    id = Column(Integer, primary_key=True, index=True)
-
-    user_id = Column(Integer, ForeignKey("users.id", ondelete="CASCADE"))
-    user: Mapped["User"] = relationship("User", back_populates="applies")
-
-    squad_id = Column(Integer, ForeignKey("squads.id", ondelete="CASCADE"))
-    squad: Mapped["Squad"] = relationship("Squad", back_populates="applies")
-
-    def __repr__(self):
-        return f"<SquadApply {self.id}>"
-
-
-class Squad(Base):
+class Squad(Base, TimeTracked):
     __tablename__ = "squads"
 
     id = Column(Integer, primary_key=True, index=True)
     name = Column(String, nullable=False)
     description = Column(String, nullable=False)
-    updated_at = Column(DateTime, nullable=False, onupdate=datetime.utcnow)
-    created_at = Column(DateTime, nullable=False, default=datetime.utcnow)
-    deleted_at = Column(DateTime, nullable=True, default=None)
 
     avatar_id = Column(Integer, ForeignKey("files.id", ondelete="CASCADE"))
     avatar: Mapped["File"] = relationship("File")
 
-    photos: Mapped[List["File"]] = relationship(secondary=squads_photos)
+    photos: Mapped[list["File"]] = relationship(secondary=squads_photos)
 
     owner_id = Column(Integer, ForeignKey("users.id", ondelete="CASCADE"))
     owner: Mapped["User"] = relationship(back_populates="owned_squads")
 
-    members: AssociationProxy[List["User"]] = association_proxy(
-        "squads_members", "member"
+    members: Mapped[list["User"]] = relationship(
+        secondary=SquadMember, back_populates="squads"
     )
 
-    invitations: Mapped[List["SquadInvitation"]] = relationship(back_populates="squad")
+    invitations: Mapped[list["User"]] = relationship(
+        secondary=SquadInvitations, back_populates="squad_invitations"
+    )
 
-    applies: Mapped[List["SquadApply"]] = relationship(back_populates="squad")
+    applications: Mapped[list["User"]] = relationship(
+        secondary=SquadApplications, back_populates="squad_applications"
+    )
 
     def __repr__(self):
         return f"<Squad {self.id}>"

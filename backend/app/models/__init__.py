@@ -2,7 +2,8 @@ from app.models.booking import Booking
 from app.models.field import Field
 from app.models.file import File
 from app.models.game import Game
-from app.models.squad import Squad, SquadApply, SquadInvitation, SquadMember
+from app.models.mixins import TimeTracked
+from app.models.squad import Squad, SquadMember
 from app.models.team import Team
 from app.models.user import User
 
@@ -15,6 +16,5 @@ __all__ = [
     "Booking",
     "Squad",
     "SquadMember",
-    "SquadInvitation",
-    "SquadApply",
+    "TimeTracked",
 ]
