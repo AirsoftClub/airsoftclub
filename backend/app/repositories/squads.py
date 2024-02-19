@@ -30,8 +30,11 @@ class SquadRepository:
 
     def get_count_by_owner(self, owner_id: str) -> int:
         return (
-            self.db.query(Squad).filter(Squad.owner.has(id=owner_id)).count()
-        )  # TODO: Should we count deleted?
+            self.db.query(Squad)
+            .filter(Squad.owner.has(id=owner_id))
+            .filter(Squad.deleted_at.is_(None))
+            .count()
+        )
 
     def upsert_squad(self, squad: Squad) -> Squad:
         self.db.add(squad)
@@ -46,6 +49,8 @@ class SquadRepository:
             squad.description = payload.description
         self.db.add(squad)
         self.db.commit()
+
+        return squad
 
     def add_squad_photos(self, squad: Squad, photos: list[UploadFile]) -> list[File]:
         directory = Path(f"static/squads/{squad.id}/photos")

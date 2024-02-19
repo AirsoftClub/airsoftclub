@@ -118,7 +118,7 @@ def create_squad(
     return squad_repository.upsert_squad(squad)
 
 
-@router.put("/{squad_id}")
+@router.put("/{squad_id}", response_model=SquadResponse)
 def update_squad(
     payload: SquadUpdateRequest,
     squad_repository: SquadRepository = Depends(),
@@ -226,9 +226,9 @@ def get_squad_applications(
     return squad.applications
 
 
-@router.delete("/{squad_id}")
+@router.delete("/{squad_id}", status_code=204)
 def delete_squad(
     squad: Squad = Depends(get_owned_squad),
     squad_repository: SquadRepository = Depends(),
 ):
-    return squad_repository.delete_squad(squad)
+    squad_repository.delete_squad(squad)

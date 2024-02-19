@@ -165,7 +165,7 @@ Feature: Squad
             avatar: null
       """
     When I do a DELETE request to /squads/1
-    And I get a 200 response
+    And I get a 204 response
     Then I do a GET request to /squads
     And I get a 200 response
     And The response JSON is
