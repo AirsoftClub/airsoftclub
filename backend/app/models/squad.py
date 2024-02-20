@@ -6,16 +6,9 @@ from sqlalchemy import Column, ForeignKey, Integer, String, Table
 from sqlalchemy.orm import Mapped, relationship
 
 if TYPE_CHECKING:
-    from app.models.file import File
+    from app.models.file import SquadAvatarFile, SquadsPhotoFile
     from app.models.user import User
 
-
-squads_photos = Table(
-    "squads_photos",
-    Base.metadata,
-    Column("squad_id", Integer, ForeignKey("squads.id")),
-    Column("file_id", Integer, ForeignKey("files.id")),
-)
 
 SquadMember = Table(
     "squad_members",
@@ -46,10 +39,8 @@ class Squad(Base, TimeTracked):
     name = Column(String, nullable=False)
     description = Column(String, nullable=False)
 
-    avatar_id = Column(Integer, ForeignKey("files.id", ondelete="CASCADE"))
-    avatar: Mapped["File"] = relationship("File")
-
-    photos: Mapped[list["File"]] = relationship(secondary=squads_photos)
+    avatar: Mapped["SquadAvatarFile"] = relationship(back_populates="squad")
+    photos: Mapped[list["SquadsPhotoFile"]] = relationship(back_populates="squad")
 
     owner_id = Column(Integer, ForeignKey("users.id", ondelete="CASCADE"))
     owner: Mapped["User"] = relationship(back_populates="owned_squads")

@@ -27,25 +27,30 @@ Follow these steps to get your development environment set up:
     pyenv virtualenv 3.12.1 airsoftclub-3.12.1
     ```
 
-3. **Install the required dependencies**:
+3. **Save Python virtual environment name to file for autoload it with `pyenv`**:
+    ```shell
+    echo "airsoftclub-3.12.1" > .python-version
+    ```
+
+4. **Install the required dependencies**:
     ```shell
     pip install poetry
     poetry install
     ```
 
-4. **Enable pre-commits and run initial checks**:
+5. **Enable pre-commits and run initial checks**:
     ```shell
     pip install pre-commit
     pre-commit install --hook-type pre-commit
     pre-commit run --all-files
     ```
 
-5. **Setup the database**:
+6. **Setup the database**:
     ```shell
     ./setup/setup_db.sh
     ```
 
-6. **Run the application using uvicorn**:
+7. **Run the application using uvicorn**:
     ```shell
     uvicorn main:create_app --reload --factory --host 0.0.0.0
     ```

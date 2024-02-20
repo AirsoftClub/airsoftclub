@@ -2,14 +2,14 @@ from typing import TYPE_CHECKING
 
 from app.models.base import Base
 from app.models.mixins import TimeTracked
-from sqlalchemy import Column, ForeignKey, Integer, String
+from sqlalchemy import Column, Integer, String
 from sqlalchemy.ext.associationproxy import AssociationProxy, association_proxy
 from sqlalchemy.orm import Mapped, relationship
 
 if TYPE_CHECKING:
     from app.models.booking import Booking
     from app.models.field import Field
-    from app.models.file import File
+    from app.models.file import UserAvatarFile, UserPhotoFile
     from app.models.game import Game
     from app.models.squad import Squad
 
@@ -23,12 +23,8 @@ class User(Base, TimeTracked):
     email = Column(String, unique=True)
     password = Column(String)
 
-    avatar_id = Column(
-        Integer,
-        ForeignKey("files.id"),
-        nullable=True,
-    )
-    avatar: Mapped["File"] = relationship()
+    avatar: Mapped["UserAvatarFile"] = relationship(back_populates="user")
+    photos: Mapped[list["UserPhotoFile"]] = relationship(back_populates="user")
 
     fields: Mapped["Field"] = relationship("Field", back_populates="owner")
 
