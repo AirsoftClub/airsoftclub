@@ -1,5 +1,7 @@
 from app.core.database import get_db
 from app.models.field import Field
+from app.models.user import User
+from app.schemas.fields import FieldCreateSchema
 from fastapi import Depends
 from sqlalchemy.orm import Session
 
@@ -18,4 +20,15 @@ class FieldRepository:
         self.db.add(field)
         self.db.commit()
         self.db.refresh(field)
+        return field
+
+    def get_count_by_name(self, name: str) -> int:
+        return self.db.query(Field).filter(Field.name == name).count()
+
+    def create(self, payload: FieldCreateSchema, owner: User) -> Field:
+        field = Field(**payload.model_dump(), owner=owner)
+        self.db.add(field)
+        self.db.commit()
+        self.db.refresh(field)
+
         return field

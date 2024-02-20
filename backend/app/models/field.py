@@ -24,8 +24,8 @@ class Field(Base, TimeTracked):
     id = Column(Integer, primary_key=True, index=True)
     name = Column(String, unique=True)
     description = Column(String, nullable=True)
-    cords_x = Column(Double, nullable=True)
-    cords_y = Column(Double, nullable=True)
+    latitude = Column(Double, nullable=True)
+    longitude = Column(Double, nullable=True)
 
     owner_id = Column(Integer, ForeignKey("users.id"))
     owner: Mapped["User"] = relationship(back_populates="fields")

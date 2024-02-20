@@ -2,7 +2,7 @@ from typing import TYPE_CHECKING
 
 from app.models.base import Base
 from app.models.mixins import TimeTracked
-from sqlalchemy import Column, ForeignKey, Integer, String
+from sqlalchemy import Boolean, Column, ForeignKey, Integer, String
 from sqlalchemy.ext.associationproxy import AssociationProxy, association_proxy
 from sqlalchemy.orm import Mapped, relationship
 
@@ -22,6 +22,7 @@ class User(Base, TimeTracked):
     lastname = Column(String)
     email = Column(String, unique=True)
     password = Column(String)
+    is_admin = Column(Boolean, nullable=False, default=False)
 
     avatar_id = Column(
         Integer,
@@ -30,7 +31,7 @@ class User(Base, TimeTracked):
     )
     avatar: Mapped["File"] = relationship()
 
-    fields: Mapped["Field"] = relationship("Field", back_populates="owner")
+    fields: Mapped[list["Field"]] = relationship("Field", back_populates="owner")
 
     bookings: Mapped[list["Booking"]] = relationship(back_populates="player")
 
