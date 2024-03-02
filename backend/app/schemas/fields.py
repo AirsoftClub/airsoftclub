@@ -16,6 +16,10 @@ class FieldResponse(BaseModel):
     avatar: Optional[AvatarResponse] = None
 
 
+class FieldDistanceResponse(FieldResponse):
+    distance: float
+
+
 class FieldCreateSchema(BaseModel):
     name: str
     description: str | None = None

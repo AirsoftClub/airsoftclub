@@ -159,3 +159,56 @@ Feature: Fields
         latitude: 90.00
         longitude: 45.00
       """
+
+  Scenario: Get by distance
+    Given The following user exists
+      """
+      name: Minerva
+      lastname: Owner
+      email: minerva@owner.com
+      password: secret1
+      """
+    And The following user exists
+      """
+      name: Zona Ceta
+      lastname: Owner
+      email: zona_ceta@owner.com
+      password: secret2
+      """
+    And I do a POST request to /fields/ with the following data
+      """
+      owner: minerva@owner.com
+      field:
+        name: Minerva Combat
+        description: Airsoft
+        latitude: 36.6556981
+        longitude: -4.699717
+      """
+    And I do a POST request to /fields/ with the following data
+      """
+      owner: zona_ceta@owner.com
+      field:
+        name: Zona Ceta
+        description: Airsoft
+        latitude: 36.7491853
+        longitude: -4.5394793
+      """
+    When I do a GET request to /fields/distance?latitude=36.7119847&longitude=-4.4341437
+    Then I get a 200 response
+    And The response JSON is
+      """
+      - id: 2
+        name: Zona Ceta
+        description: Airsoft
+        avatar: null
+        latitude: 36.7491853
+        longitude: -4.5394793
+        distance: 10.25826136099434
+      - id: 1
+        name: Minerva Combat
+        description: Airsoft
+        avatar: null
+        latitude: 36.6556981
+        longitude: -4.699717
+        distance: 24.494825076133033
+      """

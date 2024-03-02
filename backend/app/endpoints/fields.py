@@ -5,10 +5,11 @@ from app.models.file import File
 from app.models.user import User
 from app.repositories.fields import FieldRepository
 from app.repositories.users import UserRepository
-from app.schemas.fields import FieldResponse, FieldUpsertRequest
+from app.schemas.fields import FieldDistanceResponse, FieldResponse, FieldUpsertRequest
 from app.schemas.files import FileResponse
 from app.security.auth import get_admin_user, get_current_user
 from fastapi import APIRouter, Depends, HTTPException, UploadFile
+from pydantic_extra_types.coordinate import Latitude, Longitude
 
 router = APIRouter()
 
@@ -53,6 +54,29 @@ def get_fields(
     field_repository: FieldRepository = Depends(),
 ):
     return field_repository.get_all()
+
+
+@router.get("/distance", response_model=list[FieldDistanceResponse])
+def get_field_by_distance(
+    latitude: Latitude,
+    longitude: Longitude,
+    limit: int = 10,
+    field_repository: FieldRepository = Depends(),
+):
+    return [
+        {
+            "id": field.id,
+            "name": field.name,
+            "description": field.description,
+            "latitude": field.latitude,
+            "longitude": field.longitude,
+            "avatar": field.avatar,
+            "distance": distance,
+        }
+        for field, distance in field_repository.get_all_by_distance(
+            latitude, longitude, limit
+        )
+    ]
 
 
 @router.get("/{field_id}", response_model=FieldResponse)
