@@ -1,12 +1,23 @@
+from app.endpoints.fields import get_owned_field
+from app.models.field import Field
 from app.models.user import User
 from app.repositories.games import GameRepository
 from app.schemas.bookings import BookingResponse
-from app.schemas.games import GameResponse
+from app.schemas.games import CreateGameRequest, GameResponse
 from app.schemas.teams import TeamResponse
 from app.security.auth import get_current_user
 from fastapi import APIRouter, Depends, HTTPException
 
 router = APIRouter()
+
+
+@router.post("/field/{field_id}/", response_model=GameResponse)
+def create_game(
+    payload: CreateGameRequest,
+    field: Field = Depends(get_owned_field),
+    game_repository: GameRepository = Depends(),
+):
+    return game_repository.create(payload, field)
 
 
 @router.get("/", response_model=list[GameResponse])

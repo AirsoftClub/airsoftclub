@@ -1,7 +1,10 @@
 from datetime import datetime
 
 from app.core.database import get_db
+from app.models.field import Field
 from app.models.game import Game
+from app.models.team import Team
+from app.schemas.games import CreateGameRequest
 from fastapi import Depends
 from sqlalchemy.orm import Session
 
@@ -15,3 +18,17 @@ class GameRepository:
 
     def get_game(self, id: int) -> Game:
         return self.db.query(Game).filter(Game.id == id).first()
+
+    def create(self, payload: CreateGameRequest, field: Field) -> Game:
+        teams = [Team(name=name) for name in payload.teams]
+        game = Game(
+            **payload.model_dump(exclude=["teams"]),
+            teams=teams,
+            field=field,
+            created_at=datetime.utcnow(),
+        )
+
+        self.db.add(game)
+        self.db.commit()
+
+        return game
