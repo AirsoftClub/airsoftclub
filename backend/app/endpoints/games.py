@@ -1,6 +1,6 @@
 from app.endpoints.fields import get_owned_field
 from app.models.field import Field
-from app.models.user import User
+from app.models.game import Game
 from app.repositories.games import GameRepository
 from app.schemas.bookings import BookingResponse
 from app.schemas.games import CreateGameRequest, GameResponse
@@ -8,7 +8,19 @@ from app.schemas.teams import TeamResponse
 from app.security.auth import get_current_user
 from fastapi import APIRouter, Depends, HTTPException
 
-router = APIRouter()
+router = APIRouter(dependencies=[Depends(get_current_user)])
+
+
+def get_current_game(
+    game_id: int,
+    game_repository: GameRepository = Depends(),
+) -> Game:
+    game = game_repository.get_game(game_id)
+
+    if not game:
+        raise HTTPException(status_code=404, detail="Game not found")
+
+    return game
 
 
 @router.post("/field/{field_id}/", response_model=GameResponse)
@@ -22,49 +34,21 @@ def create_game(
 
 @router.get("/", response_model=list[GameResponse])
 def get_joinable_games(
-    current_user: User = Depends(get_current_user),
     game_repository: GameRepository = Depends(),
 ) -> list[GameResponse]:
     return game_repository.get_joinable_games()
 
 
-@router.get("/{id}", response_model=GameResponse)
-def get_game(
-    id: int,
-    current_user: User = Depends(get_current_user),
-    game_repository: GameRepository = Depends(),
-) -> GameResponse:
-    game = game_repository.get_game(id)
-
-    if not game:
-        raise HTTPException(status_code=404, detail="Game not found")
-
+@router.get("/{game_id}", response_model=GameResponse)
+def get_game(game: Game = Depends(get_current_game)) -> GameResponse:
     return game
 
 
 @router.get("/{id}/bookings", response_model=list[BookingResponse])
-def get_game_bookings(
-    id: int,
-    current_user: User = Depends(get_current_user),
-    game_repository: GameRepository = Depends(),
-) -> list[BookingResponse]:
-    game = game_repository.get_game(id)
-
-    if not game:
-        raise HTTPException(status_code=404, detail="Game not found")
-
+def get_game_bookings(game: Game = Depends(get_current_game)) -> list[BookingResponse]:
     return game.bookings
 
 
 @router.get("/{id}/teams", response_model=list[TeamResponse])
-def get_game_teams(
-    id: int,
-    current_user: User = Depends(get_current_user),
-    game_repository: GameRepository = Depends(),
-) -> list[TeamResponse]:
-    game = game_repository.get_game(id)
-
-    if not game:
-        raise HTTPException(status_code=404, detail="Game not found")
-
+def get_game_teams(game: Game = Depends(get_current_game)) -> list[TeamResponse]:
     return game.teams
