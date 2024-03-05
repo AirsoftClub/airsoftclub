@@ -49,3 +49,56 @@ Feature: Games
       played_at: '2020-01-02T12:00:00'
       created_at: '2020-01-01T12:00:00'
       """
+    When I do a GET request to /games/1/
+    Then I get a 200 response
+    And The response JSON is
+      """
+      id: 1
+      name: Match saturday morning
+      description: Free for all
+      played_at: '2020-01-02T12:00:00'
+      created_at: '2020-01-01T12:00:00'
+      """
+    When I do a GET request to /games/1/teams/
+    Then I get a 200 response
+    And The response JSON is
+      """
+      - id: 1
+        name: RED
+        created_at: '2020-01-01T12:00:00'
+        updated_at: '2020-01-01T12:00:00'
+      - id: 2
+        name: BLUE
+        created_at: '2020-01-01T12:00:00'
+        updated_at: '2020-01-01T12:00:00'
+      """
+    When I do a GET request to /games/1/bookings/
+    Then I get a 200 response
+    And The response JSON is
+      """
+      []
+      """
+
+  Scenario: Create a game joinable game
+    Given The date is 2020-01-01T12:00:00
+    And I'm logged with the user tom_thomson@example.com
+    And I do a POST request to /games/field/1/ with the following data
+      """
+      name: Match saturday morning
+      description: Free for all
+      max_players: 20
+      played_at: '2020-01-02T12:00:00'
+      teams:
+        - RED
+        - BLUE
+      """
+    When I do a GET request to /games/
+    Then I get a 200 response
+    And The response JSON is
+      """
+      - id: 1
+        name: Match saturday morning
+        description: Free for all
+        played_at: '2020-01-02T12:00:00'
+        created_at: '2020-01-01T12:00:00'
+      """

@@ -16,11 +16,14 @@ class GameRepository:
     def get_joinable_games(self) -> list[Game]:
         return self.db.query(Game).filter(Game.played_at > datetime.utcnow()).all()
 
-    def get_game(self, id: int) -> Game:
-        return self.db.query(Game).filter(Game.id == id).first()
+    def get_game(self, game_id: int) -> Game:
+        return self.db.query(Game).filter(Game.id == game_id).first()
 
     def create(self, payload: CreateGameRequest, field: Field) -> Game:
-        teams = [Team(name=name) for name in payload.teams]
+        teams = [
+            Team(name=name, created_at=datetime.utcnow(), updated_at=datetime.utcnow())
+            for name in payload.teams
+        ]
         game = Game(
             **payload.model_dump(exclude=["teams"]),
             teams=teams,
