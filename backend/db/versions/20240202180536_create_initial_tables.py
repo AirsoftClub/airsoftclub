@@ -27,6 +27,7 @@ def upgrade() -> None:
         sa.Column("lastname", sa.String(), nullable=True),
         sa.Column("email", sa.String(), nullable=True),
         sa.Column("password", sa.String(), nullable=True),
+        sa.Column("is_admin", sa.Boolean(), nullable=False),
         sa.Column("created_at", sa.DateTime(), nullable=False),
         sa.Column("updated_at", sa.DateTime(), nullable=False),
         sa.Column("deleted_at", sa.DateTime(), nullable=True),
@@ -38,8 +39,8 @@ def upgrade() -> None:
         sa.Column("id", sa.Integer(), nullable=False),
         sa.Column("name", sa.String(), nullable=True),
         sa.Column("description", sa.String(), nullable=True),
-        sa.Column("cords_x", sa.Double(), nullable=True),
-        sa.Column("cords_y", sa.Double(), nullable=True),
+        sa.Column("latitude", sa.Double(), nullable=True),
+        sa.Column("longitude", sa.Double(), nullable=True),
         sa.Column("owner_id", sa.Integer(), nullable=True),
         sa.Column("created_at", sa.DateTime(), nullable=False),
         sa.Column("updated_at", sa.DateTime(), nullable=False),
@@ -173,20 +174,24 @@ def upgrade() -> None:
         sa.PrimaryKeyConstraint("id"),
         sa.ForeignKeyConstraint(
             ["object_id"],
+            ["bookings.id"],
+        ),  # manually added
+        sa.ForeignKeyConstraint(
+            ["object_id"],
             ["fields.id"],
-        ),
+        ),  # manually added
         sa.ForeignKeyConstraint(
             ["object_id"],
             ["games.id"],
-        ),
-        sa.ForeignKeyConstraint(
-            ["object_id"],
-            ["users.id"],
-        ),
+        ),  # manually added
         sa.ForeignKeyConstraint(
             ["object_id"],
             ["squads.id"],
-        ),
+        ),  # manually added
+        sa.ForeignKeyConstraint(
+            ["object_id"],
+            ["users.id"],
+        ),  # manually added
     )
     # ### end Alembic commands ###
 
