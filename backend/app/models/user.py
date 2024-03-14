@@ -9,7 +9,7 @@ from sqlalchemy.orm import Mapped, relationship
 if TYPE_CHECKING:
     from app.models.booking import Booking
     from app.models.field import Field
-    from app.models.file import UserAvatarFile, UserPhotoFile
+    from app.models.file import UserAvatarFile, UserPhotosFile
     from app.models.game import Game
     from app.models.squad import Squad
 
@@ -24,8 +24,16 @@ class User(Base, TimeTracked):
     password = Column(String)
     is_admin = Column(Boolean, nullable=False, default=False)
 
-    avatar: Mapped["UserAvatarFile"] = relationship(back_populates="user")
-    photos: Mapped[list["UserPhotoFile"]] = relationship(back_populates="user")
+    avatar: Mapped["UserAvatarFile"] = relationship(
+        back_populates="user",
+        primaryjoin="User.id == foreign(UserAvatarFile.object_id)",
+        uselist=False,
+    )
+    photos: Mapped[list["UserPhotosFile"]] = relationship(
+        back_populates="user",
+        primaryjoin="User.id == foreign(UserPhotosFile.object_id)",
+        uselist=True,
+    )
 
     fields: Mapped[list["Field"]] = relationship("Field", back_populates="owner")
 

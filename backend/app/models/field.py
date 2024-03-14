@@ -6,7 +6,7 @@ from sqlalchemy import Column, Double, ForeignKey, Integer, String
 from sqlalchemy.orm import Mapped, relationship
 
 if TYPE_CHECKING:
-    from app.models.file import FieldAvatarFile, FieldPhotoFile
+    from app.models.file import FieldLogoFile, FieldPhotosFile
     from app.models.game import Game
     from app.models.user import User
 
@@ -23,12 +23,18 @@ class Field(Base, TimeTracked):
     owner_id = Column(Integer, ForeignKey("users.id"))
     owner: Mapped["User"] = relationship(back_populates="fields")
 
-    avatar: Mapped["FieldAvatarFile"] = relationship(back_populates="field")
-    photos: Mapped[list["FieldPhotoFile"]] = relationship(back_populates="field")
-
-    games: Mapped[list["Game"]] = relationship(
+    logo: Mapped["FieldLogoFile"] = relationship(
         back_populates="field",
+        primaryjoin="Field.id == foreign(FieldLogoFile.object_id)",
+        uselist=False,
     )
+    photos: Mapped[list["FieldPhotosFile"]] = relationship(
+        back_populates="field",
+        primaryjoin="Field.id == foreign(FieldPhotosFile.object_id)",
+        uselist=True,
+    )
+
+    games: Mapped[list["Game"]] = relationship(back_populates="field")
 
     def __repr__(self):
         return f"<Field {self.name}>"

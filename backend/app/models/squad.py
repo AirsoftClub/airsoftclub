@@ -6,7 +6,7 @@ from sqlalchemy import Column, ForeignKey, Integer, String, Table
 from sqlalchemy.orm import Mapped, relationship
 
 if TYPE_CHECKING:
-    from app.models.file import SquadAvatarFile, SquadsPhotoFile
+    from app.models.file import SquadLogoFile, SquadPhotosFile
     from app.models.user import User
 
 
@@ -39,9 +39,6 @@ class Squad(Base, TimeTracked):
     name = Column(String, nullable=False)
     description = Column(String, nullable=False)
 
-    avatar: Mapped["SquadAvatarFile"] = relationship(back_populates="squad")
-    photos: Mapped[list["SquadsPhotoFile"]] = relationship(back_populates="squad")
-
     owner_id = Column(Integer, ForeignKey("users.id", ondelete="CASCADE"))
     owner: Mapped["User"] = relationship(back_populates="owned_squads")
 
@@ -55,6 +52,17 @@ class Squad(Base, TimeTracked):
 
     applications: Mapped[list["User"]] = relationship(
         secondary=SquadApplications, back_populates="squad_applications"
+    )
+
+    logo: Mapped["SquadLogoFile"] = relationship(
+        back_populates="squad",
+        primaryjoin="Squad.id == foreign(SquadLogoFile.object_id)",
+        uselist=False,
+    )
+    photos: Mapped[list["SquadPhotosFile"]] = relationship(
+        back_populates="squad",
+        primaryjoin="Squad.id == foreign(SquadPhotosFile.object_id)",
+        uselist=True,
     )
 
     def __repr__(self):
