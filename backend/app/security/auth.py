@@ -34,6 +34,15 @@ def get_current_user(
         raise HTTPException(status_code=401, detail="Not authenticated")
 
 
+def get_admin_user(
+    current_user: User = Depends(get_current_user),
+) -> User:
+    if not current_user.is_admin:
+        raise HTTPException(status_code=403, detail="Not authorized")
+
+    return current_user
+
+
 def token_encode(payload: UserJWTPayload) -> str:
     return jwt.encode(payload.model_dump(), settings.app_secret, algorithm="HS256")
 

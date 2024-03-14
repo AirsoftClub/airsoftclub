@@ -45,6 +45,18 @@ def login_user(context, email):
     context.current_user = user
 
 
+@step("The user {email} is an admin")
+def set_admin(context, email):
+    user = UserRepository(context.session).get_by_email(email)
+
+    if not user:
+        raise ValueError(f"User not found with {email}")
+
+    user.is_admin = True
+    context.session.add(user)
+    context.session.commit()
+
+
 @step("The following user exists")
 def create_user(context):
     request_with_json(context, "post", "/auth/register")

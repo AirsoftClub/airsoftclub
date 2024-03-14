@@ -3,6 +3,7 @@ from pathlib import Path
 from app.models.file import File
 from app.models.user import User
 from app.repositories.users import UserRepository
+from app.schemas.fields import FieldResponse
 from app.schemas.squads import SquadResponse
 from app.schemas.users import UserResponse, UserUpdateRequest
 from app.security.auth import get_current_user
@@ -22,7 +23,6 @@ def get_users(
 @router.get("/me", response_model=UserResponse)
 def me(
     current_user: User = Depends(get_current_user),
-    user_repository: UserRepository = Depends(),
 ):
     return current_user
 
@@ -30,15 +30,20 @@ def me(
 @router.get("/me/squads", response_model=list[SquadResponse])
 def my_squads(
     current_user: User = Depends(get_current_user),
-    user_repository: UserRepository = Depends(),
 ):
     return current_user.squads
+
+
+@router.get("/me/fields", response_model=list[FieldResponse])
+def my_fields(
+    current_user: User = Depends(get_current_user),
+):
+    return current_user.fields
 
 
 @router.get("/me/invites", response_model=list[SquadResponse])
 def my_invites(
     current_user: User = Depends(get_current_user),
-    user_repository: UserRepository = Depends(),
 ):
     return current_user.squad_invitations
 
