@@ -32,6 +32,10 @@ class Game(Base, TimeTracked):
         return [booking for booking in self.bookings if booking.accepted]
 
     @property
+    def pending_bookings(self):
+        return [booking for booking in self.bookings if booking.accepted is False]
+
+    @property
     def players(self):
         return [booking.player for booking in self.accepted_bookings]
 

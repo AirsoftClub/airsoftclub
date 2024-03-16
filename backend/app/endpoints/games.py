@@ -29,7 +29,7 @@ def get_current_game(
 
 
 def get_owned_game(
-    game: Game = Depends(get_current_user),
+    game: Game = Depends(get_current_game),
     current_user: User = Depends(get_current_user),
 ) -> Game:
     if current_user != game.field.owner:

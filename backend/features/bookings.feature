@@ -27,7 +27,7 @@ Feature: Games
       """
     And I get a 200 response
 
-  Scenario: Book to a game
+  Scenario: Book to a game and get accepted
     Given The date is 2020-01-01T12:00:00
     And I'm logged with the user tom_thomson@example.com
     And I do a POST request to /games/field/1/ with the following data
@@ -59,4 +59,13 @@ Feature: Games
       player_id: 3
       team_id: 1
       created_at: '2020-01-01T12:00:00'
+      """
+    And I do a GET request to /users/me/bookings
+    Then I get a 200 response
+    And The response JSON is
+      """
+      - game_id: 1
+        player_id: 3
+        team_id: 1
+        created_at: '2020-01-01T12:00:00'
       """

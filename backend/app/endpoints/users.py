@@ -3,6 +3,7 @@ from pathlib import Path
 from app.models.file import File
 from app.models.user import User
 from app.repositories.users import UserRepository
+from app.schemas.bookings import BookingResponse
 from app.schemas.fields import FieldResponse
 from app.schemas.squads import SquadResponse
 from app.schemas.users import UserResponse, UserUpdateRequest
@@ -54,6 +55,13 @@ def my_applies(
     user_repository: UserRepository = Depends(),
 ):
     return current_user.squad_applications
+
+
+@router.get("/me/bookings", response_model=list[BookingResponse])
+def my_bookings(
+    current_user: User = Depends(get_current_user),
+):
+    return current_user.bookings
 
 
 @router.post("/me", response_model=UserResponse)

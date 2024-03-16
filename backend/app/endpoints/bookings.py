@@ -39,13 +39,13 @@ def book_game(
     return booking_repository.book_game(game.id, current_user.id, team.id)
 
 
-@router.delete("/{id}/", responses={HTTP_204_NO_CONTENT: {"model": None}})
+@router.delete("/{booking_id}/", responses={HTTP_204_NO_CONTENT: {"model": None}})
 def leave_game(
-    id: int,
+    booking_id: int,
     current_user: User = Depends(get_current_user),
     booking_repository: BookingRepository = Depends(),
 ):
-    booking = booking_repository.get_booking(id)
+    booking = booking_repository.get_booking(booking_id)
 
     if not booking:
         raise HTTPException(status_code=404, detail="Booking not found")
@@ -53,6 +53,6 @@ def leave_game(
     if booking.player_id != current_user.id:
         raise HTTPException(status_code=403, detail="Forbidden")
 
-    booking_repository.leave_game(id)
+    booking_repository.leave_game(booking_id)
 
     return Response(status_code=HTTP_204_NO_CONTENT)

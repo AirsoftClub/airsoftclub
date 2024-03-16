@@ -72,7 +72,13 @@ Feature: Games
         created_at: '2020-01-01T12:00:00'
         updated_at: '2020-01-01T12:00:00'
       """
-    When I do a GET request to /games/1/bookings/
+    When I do a GET request to /games/1/bookings?accepted=true
+    Then I get a 200 response
+    And The response JSON is
+      """
+      []
+      """
+    When I do a GET request to /games/1/bookings?accepted=false
     Then I get a 200 response
     And The response JSON is
       """
