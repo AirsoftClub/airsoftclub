@@ -28,16 +28,8 @@ class Game(Base, TimeTracked):
     bookings: Mapped[list["Booking"]] = relationship(back_populates="game")
 
     @property
-    def accepted_bookings(self):
-        return [booking for booking in self.bookings if booking.accepted]
-
-    @property
-    def pending_bookings(self):
-        return [booking for booking in self.bookings if booking.accepted is False]
-
-    @property
     def players(self):
-        return [booking.player for booking in self.accepted_bookings]
+        return [booking.player for booking in self.bookings]
 
     def __repr__(self) -> str:
         return (

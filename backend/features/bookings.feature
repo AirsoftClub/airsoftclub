@@ -27,7 +27,7 @@ Feature: Games
       """
     And I get a 200 response
 
-  Scenario: Book to a game and get accepted
+  Scenario: Book to a game
     Given The date is 2020-01-01T12:00:00
     And I'm logged with the user tom_thomson@example.com
     And I do a POST request to /games/field/1/ with the following data

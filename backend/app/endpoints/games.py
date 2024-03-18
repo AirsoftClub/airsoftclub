@@ -63,12 +63,9 @@ def get_game(game: Game = Depends(get_current_game)) -> GameResponse:
 
 @router.get("/{game_id}/bookings", response_model=list[BookingResponse])
 def get_game_bookings(
-    accepted: bool,
     game: Game = Depends(get_owned_game),
 ) -> list[BookingResponse]:
-    if accepted:
-        return game.accepted_bookings
-    return game.pending_bookings
+    return game.bookings
 
 
 @router.get("/{game_id}/teams", response_model=list[TeamResponse])
