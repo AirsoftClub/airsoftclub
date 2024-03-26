@@ -1,8 +1,15 @@
 import yaml
 from app.repositories import UserRepository
 from app.security.auth import get_current_user
-from behave import step
+from behave import fixture, step, use_fixture
 from deepdiff import DeepDiff
+from freezegun import freeze_time
+
+
+@fixture
+def set_freeze_time(context, date):
+    with freeze_time(date):
+        yield
 
 
 @step("I do a {verb} request to {url} with the following data")
@@ -67,3 +74,8 @@ def create_user(context):
 def create_and_login_user(context):
     create_user(context)
     login_user(context, context.response.json()["email"])
+
+
+@step("The date is {date}")
+def _set_freeze_time(context, date):
+    use_fixture(set_freeze_time, context, date)

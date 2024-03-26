@@ -1,3 +1,5 @@
+from datetime import datetime
+
 from app.core.database import get_db
 from app.models.game import Booking
 from fastapi import Depends
@@ -22,7 +24,12 @@ class BookingRepository:
         )
 
     def book_game(self, game_id: int, user_id: int, team_id: int) -> Booking:
-        booking = Booking(game_id=game_id, player_id=user_id, team_id=team_id)
+        booking = Booking(
+            game_id=game_id,
+            player_id=user_id,
+            team_id=team_id,
+            created_at=datetime.utcnow(),
+        )
         self.db.add(booking)
         self.db.commit()
         self.db.refresh(booking)

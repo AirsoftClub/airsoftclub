@@ -11,7 +11,7 @@ if TYPE_CHECKING:
     from app.models.user import User
 
 
-class Booking(Base, TimeTracked):
+class Booking(Base, TimeTracked):  # TODO: add invoice files
     __tablename__ = "bookings"
 
     id = Column(Integer, primary_key=True, index=True)

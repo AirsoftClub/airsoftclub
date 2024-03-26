@@ -12,7 +12,5 @@ class BookingResponse(BaseModel):
     created_at: datetime
 
 
-class BookingCreateRequest(BaseModel):
-    model_config = ConfigDict(from_attributes=True)
-
-    game_id: int
+class BookingRequest(BaseModel):
+    team_name: str
