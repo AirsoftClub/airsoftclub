@@ -11,7 +11,7 @@ class SquadResponse(BaseModel):
     id: int
     name: str
     description: str
-    avatar: Optional[AvatarResponse]
+    logo: Optional[AvatarResponse]
     owner: UserResponse
 
 

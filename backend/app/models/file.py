@@ -37,6 +37,24 @@ class File(Base, TimeTracked):
 
 
 # TODO: too many repeated code
+class BookingConfirmationFile(File):
+    __mapper_args__ = {"polymorphic_identity": "booking_confirmation_file"}
+
+    object_id = mapped_column(
+        Integer,
+        ForeignKey("bookings.id"),
+        nullable=False,
+        use_existing_column=True,
+    )
+    booking = relationship(
+        Booking,
+        primaryjoin="Booking.id == foreign(BookingConfirmationFile.object_id)",
+        foreign_keys=[object_id],
+        back_populates="confirmation",
+        uselist=False,
+    )
+
+
 class FieldPhotosFile(File):
     __mapper_args__ = {"polymorphic_identity": "field_photos_file"}
 
@@ -107,24 +125,6 @@ class GameLogoFile(File):
         primaryjoin="Game.id == foreign(GameLogoFile.object_id)",
         foreign_keys=[object_id],
         back_populates="logo",
-        uselist=False,
-    )
-
-
-class BookingConfirmationFile(File):
-    __mapper_args__ = {"polymorphic_identity": "booking_confirmation_file"}
-
-    object_id = mapped_column(
-        Integer,
-        ForeignKey("bookings.id"),
-        nullable=False,
-        use_existing_column=True,
-    )
-    booking = relationship(
-        Booking,
-        primaryjoin="Booking.id == foreign(BookingConfirmationFile.object_id)",
-        foreign_keys=[object_id],
-        back_populates="confirmation",
         uselist=False,
     )
 
