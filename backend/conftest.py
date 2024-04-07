@@ -1,4 +1,4 @@
-from datetime import datetime
+import datetime
 
 import freezegun
 import pytest
@@ -37,7 +37,7 @@ def db_session():
 def freeze_time():
     # To avoid failure on time based tests
 
-    now = datetime.utcnow()
+    now = datetime.datetime.now(datetime.UTC)
     with freezegun.freeze_time(now):
         yield now
 

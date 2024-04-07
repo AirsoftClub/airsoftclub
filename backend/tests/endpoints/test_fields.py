@@ -17,16 +17,16 @@ def test_get_fields(client: TestClient, authenticate_user: User):
             "id": fields[0].id,
             "name": fields[0].name,
             "description": fields[0].description,
-            "cords_x": fields[0].cords_x,
-            "cords_y": fields[0].cords_y,
+            "latitude": fields[0].latitude,
+            "longitude": fields[0].longitude,
             "logo": fields[0].logo,
         },
         {
             "id": fields[1].id,
             "name": fields[1].name,
             "description": fields[1].description,
-            "cords_x": fields[1].cords_x,
-            "cords_y": fields[1].cords_y,
+            "latitude": fields[1].latitude,
+            "longitude": fields[1].longitude,
             "logo": fields[1].logo,
         },
     ]
@@ -50,8 +50,8 @@ def test_get_field(client: TestClient, authenticate_user: User):
         "id": field.id,
         "name": field.name,
         "description": field.description,
-        "cords_x": field.cords_x,
-        "cords_y": field.cords_y,
+        "latitude": field.latitude,
+        "longitude": field.longitude,
         "logo": field.logo,
     }
 
@@ -86,8 +86,8 @@ def test_upload_logo(client: TestClient, authenticate_user: User):
         "id": field.id,
         "name": field.name,
         "description": field.description,
-        "cords_x": field.cords_x,
-        "cords_y": field.cords_y,
+        "latitude": field.latitude,
+        "longitude": field.longitude,
         "logo": response.json()["logo"],
     }
 

@@ -1,4 +1,4 @@
-from datetime import datetime
+import datetime
 from pathlib import Path
 
 from app.core.database import get_db
@@ -119,7 +119,7 @@ class SquadRepository:
         self.db.commit()
 
     def delete_squad(self, squad: Squad) -> Squad:
-        squad.deleted_at = datetime.utcnow()
+        squad.deleted_at = datetime.datetime.now(datetime.UTC)
         return self.upsert_squad(squad)
 
     def touch(self, squad: Squad) -> None:
