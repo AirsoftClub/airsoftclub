@@ -15,7 +15,6 @@ class FieldFactory(SQLAlchemyModelFactory):
     description = Faker("text")
     cords_x = Faker("pyint")
     cords_y = Faker("pyint")
-    avatar_id = None
     owner_id = None
     created_at = LazyFunction(datetime.now)
     updated_at = LazyFunction(datetime.now)

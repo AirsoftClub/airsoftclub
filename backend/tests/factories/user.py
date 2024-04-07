@@ -16,7 +16,5 @@ class UserFactory(SQLAlchemyModelFactory):
     name = Faker("first_name")
     lastname = Faker("last_name")
     password = Hash.bcrypt("password")
-    avatar_id = None
-    avatar = None
     created_at = LazyFunction(datetime.now)
     updated_at = LazyFunction(datetime.now)
