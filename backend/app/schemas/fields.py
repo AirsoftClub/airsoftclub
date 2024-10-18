@@ -13,7 +13,7 @@ class FieldResponse(BaseModel):
     description: str
     latitude: Latitude | None = None
     longitude: Longitude | None = None
-    logo: Optional[AvatarResponse] = None
+    avatar: Optional[AvatarResponse] = None
 
 
 class FieldDistanceResponse(FieldResponse):

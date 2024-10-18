@@ -85,13 +85,13 @@ def add_squad_photos(
     return squad_repository.add_squad_photos(squad, photos)
 
 
-@router.post("/{squad_id}/logo")
-def add_squad_logo(
-    logo: UploadFile,
+@router.post("/{squad_id}/avatar")
+def add_squad_avatar(
+    avatar: UploadFile,
     squad_repository: SquadRepository = Depends(),
     squad: Squad = Depends(get_owned_squad),
 ):
-    return squad_repository.add_squad_logo(squad, logo)
+    return squad_repository.add_squad_avatar(squad, avatar)
 
 
 @router.post("/", response_model=SquadResponse)

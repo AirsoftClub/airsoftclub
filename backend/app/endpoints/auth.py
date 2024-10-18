@@ -1,6 +1,6 @@
 import secrets
 
-from app.models.file import UserAvatarFile
+from app.models.file import File
 from app.repositories.users import UserRepository
 from app.schemas.auth import GoogleTokenRequest, RefreshTokenRequest
 from app.schemas.users import (
@@ -25,10 +25,6 @@ def register(
     user: UserRegisterRequest,
     user_repository: UserRepository = Depends(),
 ):
-    print(
-        "Users in db:",
-        [str(db_user.created_at) for db_user in user_repository.get_all()],
-    )
     if user_repository.get_by_email(user.email) is not None:
         raise HTTPException(status_code=400, detail="Email already registered")
 
@@ -80,7 +76,7 @@ def google_login(
             )
         )
 
-    user.avatar = UserAvatarFile(path=user_data.picture)
+    user.avatar = File(path=user_data.picture)
     user_repository.create(user)
 
     return generate_token_family_from_user(user.id)

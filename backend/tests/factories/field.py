@@ -13,8 +13,9 @@ class FieldFactory(SQLAlchemyModelFactory):
     id = Sequence(lambda n: n)
     name = Faker("name")
     description = Faker("text")
-    latitude = Faker("latitude")
-    longitude = Faker("longitude")
+    cords_x = Faker("pyint")
+    cords_y = Faker("pyint")
+    avatar_id = None
     owner_id = None
     created_at = LazyFunction(datetime.now)
     updated_at = LazyFunction(datetime.now)

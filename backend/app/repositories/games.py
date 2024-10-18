@@ -1,4 +1,4 @@
-import datetime
+from datetime import datetime
 
 from app.core.database import get_db
 from app.models.field import Field
@@ -14,11 +14,7 @@ class GameRepository:
         self.db = db
 
     def get_joinable_games(self) -> list[Game]:
-        return (
-            self.db.query(Game)
-            .filter(Game.played_at > datetime.datetime.now(datetime.UTC))
-            .all()
-        )
+        return self.db.query(Game).filter(Game.played_at > datetime.utcnow()).all()
 
     def get_game(self, game_id: int) -> Game:
         return self.db.query(Game).filter(Game.id == game_id).first()

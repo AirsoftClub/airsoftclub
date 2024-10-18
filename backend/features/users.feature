@@ -98,7 +98,7 @@ Feature: Users
       - id: 1
         name: Power Rangers Squad
         description: Po-po-power rangers!
-        logo: null
+        avatar: null
         owner:
             id: 1
             name: John
@@ -133,7 +133,7 @@ Feature: Users
       - id: 1
         name: Power Rangers Squad
         description: Po-po-power rangers!
-        logo: null
+        avatar: null
         owner:
             id: 1
             name: John
@@ -169,7 +169,7 @@ Feature: Users
       - id: 1
         name: Power Rangers Squad
         description: Po-po-power rangers!
-        logo: null
+        avatar: null
         owner:
             id: 1
             name: John
@@ -179,7 +179,7 @@ Feature: Users
       - id: 2
         name: Synergy seekers
         description: catchy phrase
-        logo: null
+        avatar: null
         owner:
             id: 1
             name: John
@@ -208,7 +208,7 @@ Feature: Users
       - id: 1
         name: Power Rangers Squad
         description: Po-po-power rangers!
-        logo: null
+        avatar: null
         owner:
             id: 1
             name: John

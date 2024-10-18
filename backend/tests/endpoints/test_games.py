@@ -1,4 +1,4 @@
-import datetime
+from datetime import datetime, timedelta
 
 from app.models.user import User
 from fastapi.testclient import TestClient
@@ -6,7 +6,7 @@ from tests.factories.game import GameFactory
 
 
 def test_get_joinable_games_tomorrow(client: TestClient, authenticate_user: User):
-    tomorrow = datetime.datetime.now(datetime.UTC) + datetime.timedelta(days=1)
+    tomorrow = datetime.utcnow() + timedelta(days=1)
 
     games = GameFactory.create_batch(2, played_at=tomorrow)
 
@@ -33,7 +33,7 @@ def test_get_joinable_games_tomorrow(client: TestClient, authenticate_user: User
 
 
 def test_get_joinable_games_yesterday(client: TestClient, authenticate_user: User):
-    yesterday = datetime.datetime.now(datetime.UTC) - datetime.timedelta(days=1)
+    yesterday = datetime.utcnow() - timedelta(days=1)
 
     GameFactory.create_batch(2, played_at=yesterday)
 

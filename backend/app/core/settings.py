@@ -2,8 +2,6 @@ from pydantic_settings import BaseSettings
 
 
 class Settings(BaseSettings):
-    """This class preloads configs from .env file."""
-
     app_secret: str
     app_url: str = "http://localhost:8000"
     google_client_id: str
