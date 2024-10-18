@@ -15,12 +15,14 @@ def set_freeze_time(context, date):
 @step("I do a {verb} request to {url} with the following data")
 def request_with_json(context, verb, url):
     json = yaml.safe_load(context.text)
-    context.response = getattr(context.client, verb.lower())(url, json=json)
+    context.response = getattr(context.client, verb.lower())(
+        f"http://localhost{url}", json=json
+    )
 
 
 @step("I do a {verb} request to {url}")
 def request(context, verb, url):
-    context.response = getattr(context.client, verb.lower())(url)
+    context.response = getattr(context.client, verb.lower())(f"http://localhost{url}")
 
 
 @step("I get a {status_code:d} response")

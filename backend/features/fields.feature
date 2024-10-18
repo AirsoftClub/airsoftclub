@@ -33,7 +33,7 @@ Feature: Fields
       id: 1
       name: Minorva
       description: Noveatu
-      avatar: null
+      logo: null
       latitude: 90.00
       longitude: 45.00
       """
@@ -81,13 +81,13 @@ Feature: Fields
       - id: 1
         name: Minorva
         description: Noveatu
-        avatar: null
+        logo: null
         latitude: 90.00
         longitude: 45.00
       - id: 2
         name: Zona Teta
         description: Noveatu
-        avatar: null
+        logo: null
         latitude: 90.00
         longitude: 45.00
       """
@@ -109,7 +109,7 @@ Feature: Fields
       id: 1
       name: Minorva
       description: Noveatu
-      avatar: null
+      logo: null
       latitude: 90.00
       longitude: 45.00
       """
@@ -149,13 +149,13 @@ Feature: Fields
       - id: 1
         name: Minorva
         description: Noveatu
-        avatar: null
+        logo: null
         latitude: 90.00
         longitude: 45.00
       - id: 2
         name: Zona Teta
         description: Noveatu
-        avatar: null
+        logo: null
         latitude: 90.00
         longitude: 45.00
       """
@@ -200,14 +200,14 @@ Feature: Fields
       - id: 2
         name: Zona Ceta
         description: Airsoft
-        avatar: null
+        logo: null
         latitude: 36.7491853
         longitude: -4.5394793
         distance: 10.25826136099434
       - id: 1
         name: Minerva Combat
         description: Airsoft
-        avatar: null
+        logo: null
         latitude: 36.6556981
         longitude: -4.699717
         distance: 24.494825076133033

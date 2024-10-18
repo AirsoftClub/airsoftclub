@@ -17,17 +17,17 @@ def test_get_fields(client: TestClient, authenticate_user: User):
             "id": fields[0].id,
             "name": fields[0].name,
             "description": fields[0].description,
-            "cords_x": fields[0].cords_x,
-            "cords_y": fields[0].cords_y,
-            "avatar": fields[0].avatar,
+            "latitude": fields[0].latitude,
+            "longitude": fields[0].longitude,
+            "logo": fields[0].logo,
         },
         {
             "id": fields[1].id,
             "name": fields[1].name,
             "description": fields[1].description,
-            "cords_x": fields[1].cords_x,
-            "cords_y": fields[1].cords_y,
-            "avatar": fields[1].avatar,
+            "latitude": fields[1].latitude,
+            "longitude": fields[1].longitude,
+            "logo": fields[1].logo,
         },
     ]
 
@@ -50,9 +50,9 @@ def test_get_field(client: TestClient, authenticate_user: User):
         "id": field.id,
         "name": field.name,
         "description": field.description,
-        "cords_x": field.cords_x,
-        "cords_y": field.cords_y,
-        "avatar": field.avatar,
+        "latitude": field.latitude,
+        "longitude": field.longitude,
+        "logo": field.logo,
     }
 
 
@@ -72,12 +72,12 @@ def test_get_field_not_found(client: TestClient, authenticate_user: User):
 
 @mock.patch("builtins.open", mock.mock_open(read_data=b"image"))
 @mock.patch("pathlib.Path.mkdir", mock.Mock())
-def test_upload_avatar(client: TestClient, authenticate_user: User):
+def test_upload_logo(client: TestClient, authenticate_user: User):
     field = FieldFactory(owner=authenticate_user)
 
     response = client.post(
-        f"/fields/{field.id}/avatar",
-        files={"avatar": ("avatar.png", b"image", "image/png")},
+        f"/fields/{field.id}/logo",
+        files={"logo": ("logo.png", b"image", "image/png")},
     )
 
     assert response.status_code == 200
@@ -86,50 +86,50 @@ def test_upload_avatar(client: TestClient, authenticate_user: User):
         "id": field.id,
         "name": field.name,
         "description": field.description,
-        "cords_x": field.cords_x,
-        "cords_y": field.cords_y,
-        "avatar": response.json()["avatar"],
+        "latitude": field.latitude,
+        "longitude": field.longitude,
+        "logo": response.json()["logo"],
     }
 
 
-def test_upload_avatar_unauthorized(client: TestClient):
+def test_upload_logo_unauthorized(client: TestClient):
     response = client.post(
-        "/fields/1/avatar",
-        files={"avatar": ("avatar.png", b"image", "image/png")},
+        "/fields/1/logo",
+        files={"logo": ("logo.png", b"image", "image/png")},
     )
 
     assert response.status_code == 401
     assert response.json() == {"detail": "Not authenticated"}
 
 
-def test_upload_avatar_field_not_found(client: TestClient, authenticate_user: User):
+def test_upload_logo_field_not_found(client: TestClient, authenticate_user: User):
     response = client.post(
-        "/fields/1/avatar",
-        files={"avatar": ("avatar.png", b"image", "image/png")},
+        "/fields/1/logo",
+        files={"logo": ("logo.png", b"image", "image/png")},
     )
 
     assert response.status_code == 404
     assert response.json() == {"detail": "Field not found"}
 
 
-def test_upload_avatar_not_owner(client: TestClient, authenticate_user: User):
+def test_upload_logo_not_owner(client: TestClient, authenticate_user: User):
     field = FieldFactory()
 
     response = client.post(
-        f"/fields/{field.id}/avatar",
-        files={"avatar": ("avatar.png", b"image", "image/png")},
+        f"/fields/{field.id}/logo",
+        files={"logo": ("logo.png", b"image", "image/png")},
     )
 
     assert response.status_code == 403
     assert response.json() == {"detail": "You are not the owner of this field"}
 
 
-def test_upload_avatar_invalid_file_type(client: TestClient, authenticate_user: User):
+def test_upload_logo_invalid_file_type(client: TestClient, authenticate_user: User):
     field = FieldFactory(owner=authenticate_user)
 
     response = client.post(
-        f"/fields/{field.id}/avatar",
-        files={"avatar": ("avatar.txt", b"image", "text/plain")},
+        f"/fields/{field.id}/logo",
+        files={"logo": ("logo.txt", b"image", "text/plain")},
     )
 
     assert response.status_code == 400
@@ -143,14 +143,14 @@ def test_upload_photos(client: TestClient, authenticate_user: User):
 
     response = client.post(
         f"/fields/{field.id}/photos",
-        files={"photos": ("avatar.png", b"image", "image/png")},
+        files={"photos": ("logo.png", b"image", "image/png")},
     )
 
     assert response.status_code == 200
 
     assert response.json() == [
         {
-            "url": f"static/fields/{field.id}/photos/avatar.png",
+            "url": f"static/fields/{field.id}/photos/logo.png",
         }
     ]
 
@@ -158,7 +158,7 @@ def test_upload_photos(client: TestClient, authenticate_user: User):
 def test_upload_photos_unauthorized(client: TestClient):
     response = client.post(
         "/fields/1/photos",
-        files={"photos": ("avatar.png", b"image", "image/png")},
+        files={"photos": ("logo.png", b"image", "image/png")},
     )
 
     assert response.status_code == 401
@@ -168,7 +168,7 @@ def test_upload_photos_unauthorized(client: TestClient):
 def test_upload_photos_field_not_found(client: TestClient, authenticate_user: User):
     response = client.post(
         "/fields/1/photos",
-        files={"photos": ("avatar.png", b"image", "image/png")},
+        files={"photos": ("logo.png", b"image", "image/png")},
     )
 
     assert response.status_code == 404
@@ -180,7 +180,7 @@ def test_upload_photos_not_owner(client: TestClient, authenticate_user: User):
 
     response = client.post(
         f"/fields/{field.id}/photos",
-        files={"photos": ("avatar.png", b"image", "image/png")},
+        files={"photos": ("logo.png", b"image", "image/png")},
     )
 
     assert response.status_code == 403
@@ -192,7 +192,7 @@ def test_upload_photos_invalid_file_type(client: TestClient, authenticate_user: 
 
     response = client.post(
         f"/fields/{field.id}/photos",
-        files={"photos": ("avatar.txt", b"image", "text/plain")},
+        files={"photos": ("logo.txt", b"image", "text/plain")},
     )
 
     assert response.status_code == 400

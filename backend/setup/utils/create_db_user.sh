@@ -18,8 +18,27 @@ log_info() {
     echo -e "INFO  [setup.utils.create_db_user] $1"
 }
 
-# Load environment variables from .env file
-export $(cat .env | grep -v '^#' | awk '/=/ {print $1}')
+# Check if an argument is provided for the environment file
+while [[ $# -gt 0 ]]; do
+    key="$1"
+
+    case $key in
+        -env)
+            ENV_FILE="$2"
+            shift
+            shift
+            ;;
+        *)  # unknown option
+            shift
+            ;;
+    esac
+done
+
+# Use default environment file if -env option is not provided
+ENV_FILE="${ENV_FILE:-.env}"
+
+# Load environment variables from "$ENV_FILE" file
+export $(cat "$ENV_FILE" | grep -v '^#' | awk '/=/ {print $1}')
 
 # Create the database user
 log_info "Creating database user: $DB_USER"

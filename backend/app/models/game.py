@@ -8,6 +8,7 @@ from sqlalchemy.orm import Mapped, relationship
 
 if TYPE_CHECKING:
     from app.models.field import Field
+    from app.models.file import GameLogoFile, GamePhotosFile
     from app.models.team import Team
 
 
@@ -30,6 +31,17 @@ class Game(Base, TimeTracked):
     @property
     def players(self):
         return [booking.player for booking in self.bookings]
+
+    logo: Mapped["GameLogoFile"] = relationship(
+        back_populates="game",
+        primaryjoin="Game.id == foreign(GameLogoFile.object_id)",
+        uselist=False,
+    )
+    photos: Mapped[list["GamePhotosFile"]] = relationship(
+        back_populates="game",
+        primaryjoin="Game.id == foreign(GamePhotosFile.object_id)",
+        uselist=True,
+    )
 
     def __repr__(self) -> str:
         return (

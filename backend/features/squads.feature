@@ -28,7 +28,7 @@ Feature: Squad
       id: 1
       name: Power Rangers Squad
       description: Po-po-power rangers!
-      avatar: null
+      logo: null
       owner:
           id: 1
           name: John
@@ -102,7 +102,7 @@ Feature: Squad
       - id: 1
         name: Power Rangers Squad
         description: Po-po-power rangers!
-        avatar: null
+        logo: null
         owner:
             id: 1
             name: John
@@ -112,7 +112,7 @@ Feature: Squad
       - id: 2
         name: Synergy seekers
         description: catchy phrase
-        avatar: null
+        logo: null
         owner:
             id: 1
             name: John
@@ -134,7 +134,7 @@ Feature: Squad
       id: 1
       name: Power Rangers Squad
       description: Po-po-power rangers!
-      avatar: null
+      logo: null
       owner:
           id: 1
           name: John
@@ -156,7 +156,7 @@ Feature: Squad
       - id: 1
         name: Power Rangers Squad
         description: Po-po-power rangers!
-        avatar: null
+        logo: null
         owner:
             id: 1
             name: John
@@ -241,7 +241,7 @@ Feature: Squad
       id: 1
       name: A-Team
       description: Po-po-power rangers!
-      avatar: null
+      logo: null
       owner:
           id: 1
           name: John
@@ -267,7 +267,7 @@ Feature: Squad
       id: 1
       name: Power Rangers Squad
       description: Now with more calcium!
-      avatar: null
+      logo: null
       owner:
           id: 1
           name: John

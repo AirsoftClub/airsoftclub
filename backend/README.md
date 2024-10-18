@@ -25,6 +25,7 @@ Follow these steps to get your development environment set up:
     ```shell
     pyenv install 3.12.1
     pyenv virtualenv 3.12.1 airsoftclub-3.12.1
+    pyenv local airsoftclub-3.12.1
     ```
 
 3. **Install the required dependencies**:
