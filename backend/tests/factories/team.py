@@ -9,7 +9,7 @@ class TeamFactory(factory.alchemy.SQLAlchemyModelFactory):
         model = Team
         sqlalchemy_session_persistence = "commit"
 
-    id: factory.Sequence(lambda n: n)  # type: ignore  # TODO: fix linter issue
+    id: factory.Sequence(lambda n: n)
     name = factory.Faker("first_name")
     created_at = factory.LazyFunction(datetime.now)
     updated_at = factory.LazyFunction(datetime.now)

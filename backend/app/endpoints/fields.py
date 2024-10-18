@@ -1,7 +1,7 @@
 from pathlib import Path
 
 from app.models.field import Field
-from app.models.file import FieldLogoFile, FieldPhotosFile
+from app.models.file import File
 from app.models.user import User
 from app.repositories.fields import FieldRepository
 from app.repositories.users import UserRepository
@@ -70,7 +70,7 @@ def get_field_by_distance(
             "description": field.description,
             "latitude": field.latitude,
             "longitude": field.longitude,
-            "logo": field.logo,
+            "avatar": field.avatar,
             "distance": distance,
         }
         for field, distance in field_repository.get_all_by_distance(
@@ -102,26 +102,26 @@ def create_field(
     return field_repository.create(payload.field, user)
 
 
-@router.post("/{field_id}/logo", response_model=FieldResponse)
-def upload_logo(
-    logo: UploadFile,
+@router.post("/{field_id}/avatar", response_model=FieldResponse)
+def upload_avatar(
+    avatar: UploadFile,
     field: Field = Depends(get_owned_field),
     field_repository: FieldRepository = Depends(),
 ):
-    if logo.content_type not in ["image/jpeg", "image/png"]:
+    if avatar.content_type not in ["image/jpeg", "image/png"]:
         raise HTTPException(status_code=400, detail="Invalid file type")
 
-    directory = Path(f"static/fields/{field.id}/logo")
+    directory = Path(f"static/fields/{field.id}/avatar")
 
     if not directory.exists():
         directory.mkdir(parents=True)
 
-    path = directory / str(logo.filename)
+    path = directory / str(avatar.filename)
 
     with open(path, "wb") as buffer:
-        buffer.write(logo.file.read())
+        buffer.write(avatar.file.read())
 
-    field.logo = FieldLogoFile(path=path.as_posix())
+    field.avatar = File(path=path.as_posix())
 
     return field_repository.update(field)
 
@@ -146,7 +146,7 @@ def upload_photos(
         with open(path, "wb") as buffer:
             buffer.write(photo.file.read())
 
-        field.photos.append(FieldPhotosFile(path=path.as_posix()))
+        field.photos.append(File(path=path.as_posix()))
 
     field_repository.update(field)
 

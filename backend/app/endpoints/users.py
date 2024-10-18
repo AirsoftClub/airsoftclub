@@ -1,6 +1,6 @@
 from pathlib import Path
 
-from app.models.file import UserAvatarFile
+from app.models.file import File
 from app.models.user import User
 from app.repositories.users import UserRepository
 from app.schemas.bookings import BookingResponse
@@ -93,7 +93,7 @@ def me_avatar(
         buffer.write(avatar.file.read())
 
     user = user_repository.get_by_id(current_user.id)
-    user.avatar = UserAvatarFile(path=file_path.as_posix())
+    user.avatar = File(path=file_path.as_posix())
 
     # TODO: Fix this
     return user_repository.update(user)

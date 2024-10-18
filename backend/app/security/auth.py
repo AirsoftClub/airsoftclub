@@ -1,5 +1,5 @@
 import calendar
-import datetime
+from datetime import datetime, timedelta
 from typing import Annotated
 
 import jwt
@@ -63,11 +63,9 @@ def generate_token_from_refresh(token: str, expiration: int) -> str:
     payload = token_decode(token)
 
     exp = calendar.timegm(
-        (
-            datetime.datetime.now(datetime.UTC) + datetime.timedelta(minutes=expiration)
-        ).timetuple()
+        (datetime.utcnow() + timedelta(minutes=expiration)).timetuple()
     )
-    now = calendar.timegm(datetime.datetime.now(datetime.UTC).timetuple())
+    now = calendar.timegm(datetime.utcnow().timetuple())
 
     payload.exp = exp
     payload.iat = now
@@ -85,11 +83,9 @@ def generate_token_family_from_refresh(token: str) -> dict[str, str]:
 
 def generate_token_from_user(user_id: int, expiration: int) -> str:
     exp = calendar.timegm(
-        (
-            datetime.datetime.now(datetime.UTC) + datetime.timedelta(minutes=expiration)
-        ).timetuple()
+        (datetime.utcnow() + timedelta(minutes=expiration)).timetuple()
     )
-    now = calendar.timegm(datetime.datetime.now(datetime.UTC).timetuple())
+    now = calendar.timegm(datetime.utcnow().timetuple())
 
     return token_encode(
         UserJWTPayload(

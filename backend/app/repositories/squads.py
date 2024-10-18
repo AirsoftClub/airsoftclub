@@ -1,8 +1,8 @@
-import datetime
+from datetime import datetime
 from pathlib import Path
 
 from app.core.database import get_db
-from app.models.file import SquadLogoFile
+from app.models.file import File
 from app.models.squad import Squad
 from app.models.user import User
 from app.schemas.squads import SquadUpdateRequest
@@ -52,9 +52,7 @@ class SquadRepository:
 
         return squad
 
-    def add_squad_photos(
-        self, squad: Squad, photos: list[UploadFile]
-    ) -> list[SquadLogoFile]:
+    def add_squad_photos(self, squad: Squad, photos: list[UploadFile]) -> list[File]:
         directory = Path(f"static/squads/{squad.id}/photos")
 
         if not directory.exists():
@@ -64,25 +62,25 @@ class SquadRepository:
             path = directory / str(photo.filename)
             with path.open("wb") as buffer:
                 buffer.write(photo.file.read())
-            squad.photos.append(SquadLogoFile(path=path.as_posix()))
+            squad.photos.append(File(path=path.as_posix()))
 
         self.db.commit()
         self.db.refresh(squad)
         return squad.photos
 
-    def add_squad_logo(self, squad: Squad, logo: UploadFile) -> SquadLogoFile:
-        directory = Path(f"static/squads/{squad.id}/logo")
+    def add_squad_avatar(self, squad: Squad, avatar: UploadFile) -> File:
+        directory = Path(f"static/squads/{squad.id}/avatar")
 
         if not directory.exists():
             directory.mkdir(parents=True)
 
-        path = directory / str(logo.filename)
+        path = directory / str(avatar.filename)
         with path.open("wb") as buffer:
-            buffer.write(logo.file.read())
+            buffer.write(avatar.file.read())
 
-        squad.logo = SquadLogoFile(path=path.as_posix())
+        squad.avatar = File(path=path.as_posix())
         squad = self.upsert_squad(squad)
-        return squad.logo
+        return squad.avatar
 
     def invite_user(self, squad: Squad, user: User) -> None:
         squad.invitations.append(user)
@@ -119,7 +117,7 @@ class SquadRepository:
         self.db.commit()
 
     def delete_squad(self, squad: Squad) -> Squad:
-        squad.deleted_at = datetime.datetime.now(datetime.UTC)
+        squad.deleted_at = datetime.utcnow()
         return self.upsert_squad(squad)
 
     def touch(self, squad: Squad) -> None:
