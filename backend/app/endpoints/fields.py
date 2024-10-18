@@ -11,7 +11,7 @@ from app.security.auth import get_admin_user, get_current_user
 from fastapi import APIRouter, Depends, HTTPException, UploadFile
 from pydantic_extra_types.coordinate import Latitude, Longitude
 
-router = APIRouter()
+router = APIRouter(dependencies=[Depends(get_current_user)])
 
 
 def get_current_field(

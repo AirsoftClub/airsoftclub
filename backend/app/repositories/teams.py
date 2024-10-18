@@ -13,6 +13,9 @@ class TeamRepository:
     def get_teams_by_game_id(self, game_id: int) -> list[Team]:
         return self.db.query(Team).filter(Team.game_id == game_id).all()
 
+    def get_by_name(self, game_id: int, name: str) -> Team:
+        return self.db.query(Team).filter_by(game_id=game_id, name=name).first()
+
     def get_team_with_less_players(self, game_id: int) -> Team | None:
         return (
             self.db.query(Team)

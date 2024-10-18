@@ -4,13 +4,11 @@ from app.models.base import Base
 from app.models.booking import Booking
 from app.models.mixins import TimeTracked
 from sqlalchemy import Column, DateTime, ForeignKey, Integer, String
-from sqlalchemy.ext.associationproxy import AssociationProxy, association_proxy
 from sqlalchemy.orm import Mapped, relationship
 
 if TYPE_CHECKING:
     from app.models.field import Field
     from app.models.team import Team
-    from app.models.user import User
 
 
 class Game(Base, TimeTracked):
@@ -29,7 +27,11 @@ class Game(Base, TimeTracked):
 
     bookings: Mapped[list["Booking"]] = relationship(back_populates="game")
 
-    players: AssociationProxy[list["User"]] = association_proxy("bookings", "player")
+    @property
+    def players(self):
+        return [booking.player for booking in self.bookings]
 
     def __repr__(self) -> str:
-        return f"<Game {self.name}>"
+        return (
+            f"<Game {self.name} for field {self.field.name} played at {self.played_at}>"
+        )
